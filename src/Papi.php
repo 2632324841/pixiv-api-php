@@ -71,7 +71,7 @@ class Papi extends Api{
     private function bad_words(){
         $url = 'https://public-api.secure.pixiv.net/v1.1/bad_words.json';
         $r = $this->auth_requests_call('GET', $url);
-        return $r;
+        return $this->parse_result($r);;
     }
     
     # 作品详细
@@ -83,7 +83,7 @@ class Papi extends Api{
             'include_sanity_level'=> $this->format_bool($include_sanity_level),
         ];
         $r = $this->auth_requests_call('GET', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
 
     # 用户资料
@@ -98,7 +98,7 @@ class Papi extends Api{
             'include_contacts'=> 1,
         ];
         $r = $this->auth_requests_call('GET', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
 
     # 我的订阅 404 Not Found
@@ -113,7 +113,7 @@ class Papi extends Api{
             $params['max_id'] = $max_id;
         }
         $r = $this->auth_requests_call('GET', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
 
     # 获取收藏夹
@@ -127,7 +127,7 @@ class Papi extends Api{
             'image_sizes'=> join(',',$image_sizes),
         ];
         $r = $this->auth_requests_call('GET', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
     
     # 添加收藏
@@ -139,7 +139,7 @@ class Papi extends Api{
             'publicity'=> $publicity,
         ];
         $r = $this->auth_requests_call('POST', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
 
     # 删除收藏
@@ -152,7 +152,7 @@ class Papi extends Api{
             $params = ['ids'=> $ids, 'publicity'=> $publicity];
         }
         $r = $this->auth_requests_call('DELETE', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
 
 
@@ -167,7 +167,7 @@ class Papi extends Api{
             'include_sanity_level'=> $this->format_bool($include_sanity_level),
         ];
         $r = $this->auth_requests_call('GET', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
 
     # 获取关注用户
@@ -179,7 +179,7 @@ class Papi extends Api{
             'publicity'=> $publicity,
         ];
         $r = $this->auth_requests_call('GET', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
     
     # 关注用户
@@ -191,7 +191,7 @@ class Papi extends Api{
             'publicity'=> $publicity
         ];
         $r = $this->auth_requests_call('POST', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
 
     # 解除关注用户
@@ -203,7 +203,7 @@ class Papi extends Api{
             $params = ['delete_ids'=> $user_ids, 'publicity'=> $publicity];
         }
         $r = $this->auth_requests_call('DELETE', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
     
     # 用户作品列表
@@ -217,7 +217,7 @@ class Papi extends Api{
             'image_sizes'=> join(',',$image_sizes),
         ];
         $r = $this->auth_requests_call('GET', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
 
     # 用户活动 404 Not Found
@@ -232,7 +232,7 @@ class Papi extends Api{
             $params['max_id'] = $max_id;
         }
         $r = $this->auth_requests_call('GET', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
     
     # 用户关注的用户
@@ -243,7 +243,7 @@ class Papi extends Api{
             'per_page'=> $per_page,
         ];
         $r = $this->auth_requests_call('GET', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
 
     # 排行榜/过去排行榜
@@ -268,7 +268,7 @@ class Papi extends Api{
             $params['date'] = $date;
         }
         $r = $this->auth_requests_call('GET', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
 
     # 作品搜索
@@ -288,7 +288,7 @@ class Papi extends Api{
             'image_sizes'=> join(',',$image_sizes),
         ];
         $r = $this->auth_requests_call('GET', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
 
     # 最新作品 (New -> Everyone)
@@ -303,28 +303,6 @@ class Papi extends Api{
             'profile_image_sizes'=> join(',',$profile_image_sizes),
         ];
         $r = $this->auth_requests_call('GET', $url, $headers=[], $params);
-        return $r;
+        return $this->parse_result($r);;
     }
-    
-            
-
-    public function test(){
-        $username = '';
-        $password = '';
-        $this->login($username, $password);
-        //$json = $this->works(73726426);
-        //$json = $this->users(14525258);
-        //$json = $this->me_favorite_works();
-        //$json = $this->me_following_works();
-        //$json = $this->me_following();
-        //$json = $this->me_favorite_users_follow(20228000);
-        //$json = $this->me_favorite_users_unfollow([17560794,263118]);
-        //$json = $this->users_works(16700831);
-        //$json = $this->users_following(16700831);
-        //$json = $this->ranking('2019-09-01');
-        //$json = $this->search_works('八重樱');
-        $json = $this->latest_works();
-        return $json;
-    }
-
 }
