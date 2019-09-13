@@ -983,7 +983,6 @@ class Aapi extends Api{
     public function parse_qs($next_url){
         $parse = parse_url($next_url);
         $params = $this->convertUrlQuery($parse['query']);
-        //$url = substr($next_url, 0, strpos($next_url, '?'));
         return $params;
     }
     
@@ -1007,39 +1006,4 @@ class Aapi extends Api{
         $r = $this->no_auth_requests_call('GET', $next_url, $headers = [], $params, $req_auth);
         return $this->parse_result($r);
     }
-            
-    public function test(){
-        $username = '';
-        $password = '';
-        $this->login($username, $password);
-        //$json = $this->user_illusts('40291400');
-        //$json = $this->illust_detail(76472054);
-        
-        //$json = $this->illust_related(76472054,'for_ios',['76496233','76454229']);
-        //$json = $this->illust_recommended();
-        //$json = $this->illust_ranking();
-        //$json = $this->trending_tags_illust();
-        //$json = $this->search_illust($word='八重樱');
-        //$json = $this->illust_bookmark_detail(76472054);
-        //$json = $this->illust_bookmark_add(71422901);
-        //$json = $this->user_bookmark_tags_illust();
-        //$json = $this->user_following(2374176);
-        //$json = $this->ugoira_metadata();
-        //$json = $this->spotlight_articles();
-        //$json = $this->search_autocomplete('八重樱');
-        //$json = $this->recommended_user();
-        //$json = $this->markers_novel();
-        //$json = $this->delete_user(19257936);
-        //$json = $this->user_bookmarks_illust($this->user_id, 'public');
-        //$json = $this->search_illust_popular_preview('綾波');
-        //$json = $this->user_state();
-        //$json = $this->search_illust_bookmark_ranges('綾波');
-        //$json = $this->illust_walkthrough();
-        //$json = $this->illust_new_v1(71422901);
-        //$json = $this->illust_my_pixiv();
-        //$json = $this->manga_recommended();
-        $json = $this->illust_ranking('2019-09-07');
-        return $this->json($json);
-    }
-
 }
