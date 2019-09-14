@@ -11,8 +11,8 @@ use pixiv\Aapi;
 use pixiv\Papi;
 
 $Aapi = new Aapi();
-$username = '2632324841';
-$password = 'wasd123456';
+$username = '';
+$password = '';
 $Aapi->login($username, $password);
 
 //$json = $Aapi->user_illusts('40291400');
