@@ -25,7 +25,7 @@ class Aapi extends Api{
             'user_id'=> $user_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -43,7 +43,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 	
@@ -57,7 +57,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -76,7 +76,7 @@ class Aapi extends Api{
         if($tag){
             $params['tag'] = $tag;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -98,7 +98,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -120,7 +120,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -133,7 +133,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -147,7 +147,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -162,7 +162,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -172,7 +172,7 @@ class Aapi extends Api{
         $params = [
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -185,7 +185,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -195,7 +195,7 @@ class Aapi extends Api{
         $params = [
             'illust_id'=> $illust_id,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -211,7 +211,7 @@ class Aapi extends Api{
         if($include_total_comments){
             $params['include_total_comments'] = $this->format_bool($include_total_comments);
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -230,7 +230,7 @@ class Aapi extends Api{
         }
         //由于 http_build_query原因 会在数组设置下标
         $url = $url.$this->build_query($params);
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params=null, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params=null, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -271,7 +271,7 @@ class Aapi extends Api{
         if($include_privacy_policy){
             $params['include_privacy_policy'] = $include_privacy_policy;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -292,7 +292,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -313,7 +313,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -329,7 +329,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -339,7 +339,7 @@ class Aapi extends Api{
         $params = [
             'word'=> $word,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -350,7 +350,7 @@ class Aapi extends Api{
         $params = [
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -375,7 +375,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -400,14 +400,14 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
     # 用户状态
     public function user_state(){
         $url = $this->hosts.'/v1/user/me/state';
-        $r = $this->no_auth_requests_call('GET', $url);
+        $r = $this->no_auth_guzzle_call('GET', $url);
         return $this->parse_result($r);
     }
     
@@ -426,7 +426,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -445,7 +445,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -464,7 +464,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -483,7 +483,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -496,7 +496,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -505,14 +505,14 @@ class Aapi extends Api{
         $params = [
             'word'=> $word,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
     # 
     public function illust_walkthrough($req_auth=True){
         $url = $this->hosts.'/v1/walkthrough/illusts';
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params=[], $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params=[], $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -529,7 +529,7 @@ class Aapi extends Api{
         if($include_total_comments){
             $params['include_total_comments'] = $this->format_bool($include_total_comments);
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -543,7 +543,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -557,7 +557,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -570,7 +570,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -583,7 +583,7 @@ class Aapi extends Api{
             'parent_comment_id'=> $parent_comment_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
+        $r = $this->no_auth_guzzle_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
         return $this->parse_result($r);
     }
     
@@ -596,7 +596,7 @@ class Aapi extends Api{
             'parent_comment_id'=> $parent_comment_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
+        $r = $this->no_auth_guzzle_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
         return $this->parse_result($r);
     }
 
@@ -606,7 +606,7 @@ class Aapi extends Api{
         $params = [
             'illust_id'=> $illust_id,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -624,7 +624,7 @@ class Aapi extends Api{
         if(is_array($tags)){
             $data['tags'] = join(' ', $tags);
         }
-        $r = $this->no_auth_requests_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
+        $r = $this->no_auth_guzzle_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
         return $this->parse_result($r);
     }
     
@@ -635,7 +635,7 @@ class Aapi extends Api{
             'illust_id'=> $illust_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
+        $r = $this->no_auth_guzzle_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
         return $this->parse_result($r);
     }
     
@@ -654,7 +654,7 @@ class Aapi extends Api{
         if(is_array($tags)){
             $data['tags'] = join(' ', $tags);
         }
-        $r = $this->no_auth_requests_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
+        $r = $this->no_auth_guzzle_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
         return $this->parse_result($r);
     }
     
@@ -665,7 +665,7 @@ class Aapi extends Api{
             'illust_id'=> $illust_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('POST', $url, $headers = [], $params, $data, $req_auth);
+        $r = $this->no_auth_guzzle_call('POST', $url, $headers = [], $params, $data, $req_auth);
         return $this->parse_result($r);
     }
     
@@ -679,7 +679,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -694,7 +694,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -708,7 +708,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -723,7 +723,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -736,7 +736,7 @@ class Aapi extends Api{
         if($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -750,7 +750,7 @@ class Aapi extends Api{
         if ($offset){
             $params['offset'] = $offset;
         }
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -763,7 +763,7 @@ class Aapi extends Api{
             'restrict'=> $restrict,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
+        $r = $this->no_auth_guzzle_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
         return $this->parse_result($r);
     }
     
@@ -774,7 +774,7 @@ class Aapi extends Api{
             'user_id'=> $user_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
+        $r = $this->no_auth_guzzle_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
         return $this->parse_result($r);
     }
     
@@ -785,7 +785,7 @@ class Aapi extends Api{
             'include_ranking_label'=> $this->format_bool($include_ranking_label),
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -796,7 +796,7 @@ class Aapi extends Api{
             'content_type'=> $content_type,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -807,7 +807,7 @@ class Aapi extends Api{
             'include_ranking_novels'=> $this->format_bool($include_ranking_novels),
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -819,7 +819,7 @@ class Aapi extends Api{
             'filter'=> $filter,
             'include_total_comments'=> $this->format_bool($include_total_comments),
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -830,7 +830,7 @@ class Aapi extends Api{
             'novel_id'=> $novel_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -841,7 +841,7 @@ class Aapi extends Api{
             'comment_id'=> $novel_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -852,7 +852,7 @@ class Aapi extends Api{
             'series_id'=> $series_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -863,7 +863,7 @@ class Aapi extends Api{
             'novel_id'=> $novel_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -874,7 +874,7 @@ class Aapi extends Api{
             'novel_id'=> $novel_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -885,7 +885,7 @@ class Aapi extends Api{
             'restrict'=> $restrict,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -895,7 +895,7 @@ class Aapi extends Api{
         $params = [
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -906,7 +906,7 @@ class Aapi extends Api{
             'novel_id'=> $novel_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
@@ -917,7 +917,7 @@ class Aapi extends Api{
         $params = [
             'illust_id'=> $illust_id,
         ];
-        $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
@@ -945,6 +945,7 @@ class Aapi extends Api{
         return $value;
     }
     
+	# 转换Json发送的Bool数据
     public function format_bool($bool_value){
         if(is_bool($bool_value)){
             if($bool_value == TRUE){
@@ -959,12 +960,12 @@ class Aapi extends Api{
             return 'false';
         }
     }
-    
+    # 处理返回的数据
     public function parse_result($req){
         return json_decode((string)$req->getBody(),TRUE);
     }
 
-    public function no_auth_requests_call($method, $url, $headers=[], $params=[], $data=[], $req_auth=true){
+    public function no_auth_guzzle_call($method, $url, $headers=[], $params=[], $data=[], $req_auth=true){
         if(array_key_exists('User-Agent',$headers)==FALSE || array_key_exists('user-agent',$headers)==FALSE){
             # Set User-Agent if not provided
             $headers['App-OS'] = 'ios';
@@ -981,12 +982,14 @@ class Aapi extends Api{
         }
     }
     
+	# 翻页请求数据
     public function parse_qs($next_url){
         $parse = parse_url($next_url);
         $params = $this->convertUrlQuery($parse['query']);
         return $params;
     }
     
+	# 转换Query数据
     public function convertUrlQuery($query)
     {
         $queryParts = explode('&', $query);
@@ -1004,7 +1007,7 @@ class Aapi extends Api{
             return null;
         }
         $params = $this->parse_qs($next_url);
-        $r = $this->no_auth_requests_call('GET', $next_url, $headers = [], $params, $req_auth);
+        $r = $this->no_auth_guzzle_call('GET', $next_url, $headers = [], $params, $req_auth);
         return $this->parse_result($r);
     }
 }
