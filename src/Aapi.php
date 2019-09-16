@@ -46,7 +46,8 @@ class Aapi extends Api{
         $r = $this->no_auth_requests_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
-    
+	
+	# 用户小说
     public function user_novels($user_id, $filter='for_ios', $offset=null, $req_auth=True){
         $url = $this->hosts.'/v1/user/novels';
         $params = [
