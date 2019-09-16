@@ -16,7 +16,7 @@ use pixiv\Api;
  */
 class Papi extends Api{
     
-    private function auth_requests_call($method, $url, $headers=[], $params=[], $data=[]){
+    private function auth_guzzle_call($method, $url, $headers=[], $params=[], $data=[]){
         $headers['Referer'] = 'http://spapi.pixiv.net/';
         $headers['User-Agent'] = 'PixivIOSApp/5.8.7';
         $headers['Authorization'] = 'Bearer '.$this->access_token;
@@ -48,7 +48,7 @@ class Papi extends Api{
             return null;
         }
         $params = $this->parse_qs($next_url);
-        $r = $this->no_auth_requests_call('GET', $next_url, $headers = [], $params, $req_auth);
+        $r = $this->auth_guzzle_call('GET', $next_url, $headers = [], $params, $req_auth);
         return $this->parse_result($r);
     }
     
