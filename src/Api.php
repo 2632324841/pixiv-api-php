@@ -28,8 +28,7 @@ class Api {
         $this->client = new GuzzleHttp\Client(['verify' => false,'cookies' => $jar,'http_errors' => false]);
     }
     
-    //put your code here
-    public function auth($username=NULL,$password=NULL,$refresh_token=NULL){
+    public function auth($username=NULL, $password=NULL, $refresh_token=NULL){
         //保存token
         $token_file = $username.'.token';
         //判断token是否存在
@@ -50,7 +49,6 @@ class Api {
         //获取token
         $url = 'https://oauth.secure.pixiv.net/auth/token';
         $headers = [
-            //'User-Agent'=>'PixivAndroidApp/5.0.64 (Android 6.0)',
             'App-OS'=> 'ios',
             'Accept-Language'=> 'en-us',
             'App-OS-Version'=> '12.0.1',
@@ -213,7 +211,8 @@ class Api {
         }
         return true;
     }
-
+	
+	# 读取文件
     private function ReadFile($file)
     {
         try{
@@ -226,7 +225,8 @@ class Api {
         }
     }
     
-    private function WriteFile($file,$centent,$type="w")
+	# 写入文件
+    private function WriteFile($file, $centent, $type="w")
     {
         try{
             $File = fopen($file, $type);
