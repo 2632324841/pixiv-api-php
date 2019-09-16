@@ -2,7 +2,7 @@
     "name": "pixiv_api/php",
     "require": {
 	"php": ">=5.4.0",
-        "guzzlehttp/guzzle": "^6.*"
+        "guzzlehttp/guzzle": "^6.3"
     },
     "authors": [
         {
