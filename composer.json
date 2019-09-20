@@ -7,6 +7,11 @@
 	},
     "name": "deadlymous/pixiv_api",
     "type": "library",
+    "keywords": [
+        "Pixiv",
+        "PHP",
+        "API"
+    ],
 	"description":"pixiv api",
     "require": {
 		"php":">=5.4",
@@ -18,6 +23,9 @@
             "email": "2632324841@qq.com"
         }
     ],
+	"require-dev": {
+		"phpunit/phpunit": "^1.0"
+	    },
     "minimum-stability": "1.0.0",
 	"autoload":{
 		"psr-4":{
