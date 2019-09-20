@@ -1,18 +1,28 @@
 {
-    "name": "pixiv_api/php",
+	"repositories":{
+		"packagist":{
+			"type":"composer",
+			"url":"https://packagist.phpcomposer.com"
+		}
+	},
+    "name": "deadlymous/pixiv_api",
+    "type": "library",
+	"description":"pixiv api",
     "require": {
-	"php": ">=5.4.0",
-        "guzzlehttp/guzzle": "^6.3"
+		"php":">=5.4",
+        "guzzlehttp/guzzle": "~6.0"
     },
+    "license": "1",
     "authors": [
         {
-            "name": "JC",
+            "name": "deadlymous",
             "email": "2632324841@qq.com"
         }
     ],
-	"autoload": {
-		"psr-4": {
-			"pixiv\\": "src/"
+    "minimum-stability": "dev",
+	"autoload":{
+		"psr-4":{
+			"pixiv\\":"src"
 		}
 	}
 }

@@ -189,7 +189,7 @@ class Aapi extends Api{
         return $this->parse_result($r);
     }
 
-    # 作品详情 (类似PAPI.works()，iOS中未使用)
+    # 作品详情 (类似$PAPI->works()，iOS中未使用)
     public function illust_detail($illust_id, $req_auth=True){
         $url = $this->hosts.'/v1/illust/detail';
         $params = [
@@ -966,7 +966,7 @@ class Aapi extends Api{
     }
 
     public function no_auth_guzzle_call($method, $url, $headers=[], $params=[], $data=[], $req_auth=true){
-        if(array_key_exists('User-Agent',$headers)==FALSE || array_key_exists('user-agent',$headers)==FALSE){
+        if(array_key_exists('User-Agent',$headers) == FALSE || array_key_exists('user-agent',$headers) == FALSE){
             # Set User-Agent if not provided
             $headers['App-OS'] = 'ios';
             $headers['App-OS-Version'] = '12.2';
@@ -1003,7 +1003,7 @@ class Aapi extends Api{
 
     # 翻页
     public function next_page($next_url, $req_auth=True){
-        if($next_url==null){
+        if($next_url == null){
             return null;
         }
         $params = $this->parse_qs($next_url);
