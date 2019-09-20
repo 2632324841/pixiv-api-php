@@ -7,7 +7,7 @@
 	},
     "name": "deadlymous/pixiv_api",
     "type": "library",
-    "keywords": [
+	"keywords": [
         "Pixiv",
         "PHP",
         "API"
@@ -23,17 +23,10 @@
             "email": "2632324841@qq.com"
         }
     ],
-	"config": {
-        	"sort-packages": true
-	}
-    },
-	{
-    	"version": "1.0.0"
-	},
     "minimum-stability": "dev",
 	"autoload":{
 		"psr-4":{
-			"pixiv\\":"src"
+			"pixiv\\":"/src"
 		}
 	}
 }
