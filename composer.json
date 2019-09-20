@@ -23,9 +23,6 @@
             "email": "2632324841@qq.com"
         }
     ],
-	{
-		"version": "1.0.0"
-	},
     "minimum-stability": "dev",
 	"autoload":{
 		"psr-4":{
