@@ -3,7 +3,6 @@
 类似于[upbit/pixivpy](https://github.com/upbit/pixivpy)
 
 # 实例
-***
 ```php
 require_once __DIR__ . '/vendor/autoload.php';
 use pixiv\Aapi;
@@ -59,3 +58,5 @@ $Aapi->json($json);
 //$json = $Papi->search_works('碧蓝航线');
 //$json = $Papi->latest_works();
 ```
+# 更新日志
+* [2019-09-20] First Version 
