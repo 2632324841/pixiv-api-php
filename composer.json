@@ -18,11 +18,10 @@
             "email": "2632324841@qq.com"
         }
     ],
-    "minimum-stability": "dev",
+    "minimum-stability": "1.0.0",
 	"autoload":{
 		"psr-4":{
 			"pixiv\\":"src"
 		}
-	},
-	"version": "1.0.0"
+	}
 }
