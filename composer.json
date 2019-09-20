@@ -23,9 +23,9 @@
             "email": "2632324841@qq.com"
         }
     ],
-	"require-dev": {
-		"phpunit/phpunit": "^4.0"
-	    },
+	"config": {
+        "sort-packages": true
+    },
     "minimum-stability": "dev",
 	"autoload":{
 		"psr-4":{
