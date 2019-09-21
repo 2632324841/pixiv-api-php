@@ -34,7 +34,6 @@ class Ajax extends Api{
         $json = json_decode($temp, true);
         # 设置配置数据
         $this->init_config = $json;
-        
     }
     
     public function convert_cookie($query)

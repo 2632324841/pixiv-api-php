@@ -5,24 +5,31 @@
 			"url":"https://packagist.phpcomposer.com"
 		}
 	},
+	"license":"BSD 3",
+	"version":"1.0",
     "name": "deadlymous/pixiv_api",
     "type": "library",
+	"keywords": [
+        "Pixiv",
+        "PHP",
+        "API"
+    ],
 	"description":"pixiv api",
     "require": {
 		"php":">=5.4",
         "guzzlehttp/guzzle": "~6.0"
     },
-    "license": "1",
     "authors": [
         {
             "name": "deadlymous",
             "email": "2632324841@qq.com"
         }
     ],
+	"version":"1.0.0",	
     "minimum-stability": "dev",
 	"autoload":{
 		"psr-4":{
-			"pixiv\\":"src"
+			"pixiv\\":"/src"
 		}
 	}
 }
