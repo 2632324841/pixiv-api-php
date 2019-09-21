@@ -1,5 +1,4 @@
 {
-	"license":"0BSD",
     "name": "deadlymous/pixiv_api",
     "type": "library",
 	"keywords": [
@@ -19,7 +18,6 @@
         }
     ],
 	"version":"v1.0",	
-    "minimum-stability": "dev",
 	"autoload":{
 		"psr-4":{
 			"pixiv\\":"/src"
