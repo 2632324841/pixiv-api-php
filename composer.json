@@ -5,7 +5,7 @@
 			"url":"https://packagist.phpcomposer.com"
 		}
 	},
-	"license":"BSD 3",
+	"license":"BSD",
 	"version":"1.0",
     "name": "deadlymous/pixiv_api",
     "type": "library",
