@@ -16,7 +16,6 @@ class Ajax extends Api{
     //put your code here
     protected $headers = [
         'origin'=> 'https://www.pixiv.net',
-        'content-type'=> 'application/x-www-form-urlencoded; charset=UTF-8',
         'user-agent'=> 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
         'x-requested-with'=> 'XMLHttpRequest',
     ];
@@ -47,8 +46,16 @@ class Ajax extends Api{
         return $params;
     }
     
+    # 处理返回的数据
     public function parse_result($req){
-        return json_decode((string)$req->getBody(),TRUE);
+        $result = new \stdClass();
+        $result->StatusCode = $req->getStatusCode();
+        $result->Headers = $req->getHeaders();
+        $result->ReasonPhrase = $req->getReasonPhrase();
+        $result->body = $req->getBody();
+        $result->getContents = (string)$req->getBody();
+        $result->json = json_decode((string)$req->getBody(),TRUE);
+        return $result;
     }
     
     public function ranking($date=Null, $mode='ranking', $mode_rank='daily', $content_rank='all', $p=1){
@@ -63,7 +70,7 @@ class Ajax extends Api{
             $params['date'] = $date;
         }
         $r = $this->guzzle_call('GET', $url, $this->headers, $params);
-        return (string)$r->getBody();
+        return $this->parse_result($r);
     }
     
     public function popular_illust($mode='popular_illust', $type=null, $p=1){
@@ -76,7 +83,7 @@ class Ajax extends Api{
             $params['type'] = $type;
         }
         $r = $this->guzzle_call('GET', $url, $this->headers, $params);
-        return (string)$r->getBody();
+        return $this->parse_result($r);
     }
     
     public function recommender_illust_id($mode='all'){
@@ -85,7 +92,7 @@ class Ajax extends Api{
             'mode'=> $mode,
         ];
         $r = $this->guzzle_call('GET', $url, $this->headers, $params);
-        return (string)$r->getBody();
+        return $this->parse_result($r);
     }
     
     public function illust_details($illust_ids){
@@ -97,7 +104,7 @@ class Ajax extends Api{
             $params['illust_ids'] = join(',', $illust_ids);
         }
         $r = $this->guzzle_call('GET', $url, $this->headers, $params);
-        return (string)$r->getBody();
+        return $this->parse_result($r);
     }
     
     public function search_illusts($word, $include_meta=1, $mode='safe', $s_mode='s_tag', $p=1, $order=null, $ratio=null, $wlt=null, $wgt=null, $hlt=null, $hgt=null, $scd=null, $ecd=null, $blt=null, $bgt=null){
@@ -122,7 +129,7 @@ class Ajax extends Api{
             $params['order'] = $order;
         }
         $r = $this->guzzle_call('GET', $url, $this->headers, $params);
-        return (string)$r->getBody();
+        return $this->parse_result($r);
     }
     
     public function bookmark_new_illust($type='illusts', $include_meta=1 , $tag=null, $p=1){
@@ -136,7 +143,7 @@ class Ajax extends Api{
             $params['tag'] = $tag;
         }
         $r = $this->guzzle_call('GET', $url, $this->headers, $params);
-        return (string)$r->getBody();
+        return $this->parse_result($r);
     }
     
     public function bookmark_illust($user_id, $type='illust', $tag=null, $p=1){
@@ -150,7 +157,7 @@ class Ajax extends Api{
             $params['tag'] = $tag;
         }
         $r = $this->guzzle_call('GET', $url, $this->headers, $params);
-        return (string)$r->getBody();
+        return $this->parse_result($r);
     }
     
     public function history($type='illust', $p=1){
@@ -160,7 +167,7 @@ class Ajax extends Api{
             'p'=> $p,
         ];
         $r = $this->guzzle_call('GET', $url, $this->headers, $params);
-        return (string)$r->getBody();
+        return $this->parse_result($r);
     }
     
     public function add_bookmark_illustda($illust_id, $mode='add_bookmark_illust', $restrict=0, $tag=null, $comment=null){
@@ -174,7 +181,7 @@ class Ajax extends Api{
             'tt'=> $this->init_config['pixiv.context.postKey'],
         ];
         $r = $this->guzzle_call('POST', $url, $this->headers, $params=[], $data);
-        return (string)$r->getBody();
+        return $this->parse_result($r);
     }
     
     public function delete_bookmark_illustda($illust_id, $mode='delete_bookmark_illust', $restrict=0, $tag=null, $comment=null){
@@ -188,19 +195,19 @@ class Ajax extends Api{
             'tt'=> $this->init_config['pixiv.context.postKey'],
         ];
         $r = $this->guzzle_call('POST', $url, $this->headers, $params=[], $data);
-        return (string)$r->getBody();
+        return $this->parse_result($r);
     }
     
     public function user_status(){
         $url = 'https://www.pixiv.net/touch/ajax/user/self/status';
         $r = $this->guzzle_call('GET', $url, $this->headers, $params=[]);
-        return (string)$r->getBody();
+        return $this->parse_result($r);
     }
     
     public function user_settings(){
         $url = 'https://www.pixiv.net/touch/ajax/settings';
         $r = $this->guzzle_call('GET', $url, $this->headers, $params=[]);
-        return (string)$r->getBody();
+        return $this->parse_result($r);
     }
     
     public function update_age_check($user_x_restrict=0, $mode='set_user_x_restrict'){
@@ -211,6 +218,6 @@ class Ajax extends Api{
             'tt'=> $this->init_config['pixiv.context.postKey'],
         ];
         $r = $this->guzzle_call('POST', $url, $this->headers, $params=[], $data);
-        return (string)$r->getBody();
+        return $this->parse_result($r);
     }
 }
