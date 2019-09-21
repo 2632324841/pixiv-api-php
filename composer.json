@@ -6,7 +6,6 @@
 		}
 	},
 	"license":"MIT",
-	"version":"1.0",
     "name": "deadlymous/pixiv_api",
     "type": "library",
 	"keywords": [
