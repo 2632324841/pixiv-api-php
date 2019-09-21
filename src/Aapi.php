@@ -960,12 +960,20 @@ class Aapi extends Api{
             return 'false';
         }
     }
+    
     # 处理返回的数据
     public function parse_result($req){
-        return json_decode((string)$req->getBody(),TRUE);
+        $result = new \stdClass();
+        $result->StatusCode = $req->getStatusCode();
+        $result->Headers = $req->getHeaders();
+        $result->ReasonPhrase = $req->getReasonPhrase();
+        $result->body = $req->getBody();
+        $result->getContents = (string)$req->getBody();
+        $result->json = json_decode((string)$req->getBody(),TRUE);
+        return $result;
     }
 
-    public function no_auth_guzzle_call($method, $url, $headers=[], $params=[], $data=[], $req_auth=true){
+    public function no_auth_guzzle_call($method, $url, $headers=[], $params=[], $data=[], $req_auth=True){
         if(array_key_exists('User-Agent',$headers) == FALSE || array_key_exists('user-agent',$headers) == FALSE){
             # Set User-Agent if not provided
             $headers['App-OS'] = 'ios';
@@ -982,14 +990,14 @@ class Aapi extends Api{
         }
     }
     
-	# 翻页请求数据
+    # 翻页请求数据
     public function parse_qs($next_url){
         $parse = parse_url($next_url);
         $params = $this->convertUrlQuery($parse['query']);
         return $params;
     }
     
-	# 转换Query数据
+    # 转换Query数据
     public function convertUrlQuery($query)
     {
         $queryParts = explode('&', $query);
