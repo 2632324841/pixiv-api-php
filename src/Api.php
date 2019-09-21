@@ -8,6 +8,7 @@
 
 namespace pixiv;
 use GuzzleHttp;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Description of Api
@@ -81,25 +82,25 @@ class Api {
                 $data['refresh_token'] = $this->refresh_token;
             }
         }
-        else
-        {
-            return '[ERROR] auth() but no password or refresh_token is set.';
-        }
-        $response = $this->guzzle_call('POST', $url, $headers, $params=[], $data);
+        try {
+            $response = $this->guzzle_call('POST', $url, $headers, $params=[], $data);
         
-        if($response->getStatusCode() == 200)
-        {
-            $json = json_decode((string)$response->getBody(),true);
-            $this->user_id = $json['response']['user']['id'];
-            $this->access_token = $json['response']['access_token'];
-            $this->refresh_token = $json['response']['refresh_token'];
-            $json['create_time'] = time();
-            $this->WriteFile($token_file, json_encode($json));
-            return 1;
-        }
-        $re = json_decode((string)$response->getBody(),TRUE);
-        if(array_key_exists('has_error', $re)){
-            return $re['errors']['system']['message'];
+            if($response->getStatusCode() == 200)
+            {
+                $json = json_decode((string)$response->getBody(),true);
+                $this->user_id = $json['response']['user']['id'];
+                $this->access_token = $json['response']['access_token'];
+                $this->refresh_token = $json['response']['refresh_token'];
+                $json['create_time'] = time();
+                $this->WriteFile($token_file, json_encode($json));
+                return 1;
+            }
+            $re = json_decode((string)$response->getBody(),TRUE);
+            if($re['has_error']){
+                exit($re['errors']['system']['message']);
+            }
+        } catch (RequestException $e) {
+            exit($e->getMessage());
         }
     }
     
