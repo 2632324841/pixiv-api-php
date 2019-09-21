@@ -2,7 +2,10 @@
 这是一个Pixiv IOS API 
 类似于[upbit/pixivpy](https://github.com/upbit/pixivpy)
 
-# 实例
+## 安装
+> composer require deadlymous/pixiv_api
+
+## 实例
 ```php
 require_once __DIR__ . '/vendor/autoload.php';
 use pixiv\Aapi;
