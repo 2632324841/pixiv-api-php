@@ -35,6 +35,7 @@ class Papi extends Api{
         $result->json = json_decode((string)$req->getBody(),TRUE);
         return $result;
     }
+     
     # 翻页参数
     public function parse_qs($next_url){
         $parse = parse_url($next_url);
@@ -55,7 +56,7 @@ class Papi extends Api{
     
     # 翻页
     public function next_page($next_url, $req_auth=True){
-        if($next_url==null){
+        if($next_url == null){
             return null;
         }
         $params = $this->parse_qs($next_url);
