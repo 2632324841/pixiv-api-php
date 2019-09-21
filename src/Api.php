@@ -98,7 +98,7 @@ class Api {
             return 1;
         }
         $re = json_decode((string)$response->getBody(),TRUE);
-        if($re['has_error']){
+        if(array_key_exists('has_error', $re)){
             return $re['errors']['system']['message'];
         }
     }
@@ -118,9 +118,10 @@ class Api {
         return $this->auth($username,$password);
     }
     
-    public function json($json){
+    public function json($json, $code = 200){
         if(is_array($json)){
             header('Content-Type:application/json; charset=utf-8');
+            http_response_code($code);
             exit(json_encode($json,JSON_UNESCAPED_UNICODE));
         }
         return FALSE;
