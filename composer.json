@@ -1,5 +1,5 @@
 {
-	"license":"BSD",
+	"license":"0BSD",
     "name": "deadlymous/pixiv_api",
     "type": "library",
 	"keywords": [
