@@ -1,11 +1,5 @@
 {
-	"repositories":{
-		"packagist":{
-			"type":"composer",
-			"url":"https://packagist.phpcomposer.com"
-		}
-	},
-	"license":"MIT",
+	"license":"BSD",
     "name": "deadlymous/pixiv_api",
     "type": "library",
 	"keywords": [
@@ -24,16 +18,11 @@
             "email": "2632324841@qq.com"
         }
     ],
-	"version":"1.0.0",	
+	"version":"v1.0",	
     "minimum-stability": "dev",
 	"autoload":{
 		"psr-4":{
 			"pixiv\\":"/src"
 		}
 	},
-	"extra": {
-		"branch-alias": {
-		    "dev-master": "1.0-dev"
-		}
-	    }
 }
