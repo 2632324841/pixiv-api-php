@@ -24,14 +24,19 @@ class Api {
     protected $user_id = 0;
     protected $save_time = 3600;
     protected $client;
+    protected $token_path = './';
     public function __construct() {
         $jar = new \GuzzleHttp\Cookie\CookieJar();
         $this->client = new GuzzleHttp\Client(['verify' => false,'cookies' => $jar,'http_errors' => false]);
     }
     
     public function auth($username=NULL, $password=NULL, $refresh_token=NULL){
+        if(!is_dir($this->token_path))
+        {
+            mkdir($this->token_path, 0777);
+        }
         //保存token
-        $token_file = $username.'.token';
+        $token_file = $this->token_path.$username.'.token';
         //判断token是否存在
         if(is_file($token_file)){
             $json = $this->ReadFile($token_file);
@@ -81,6 +86,10 @@ class Api {
             {
                 $data['refresh_token'] = $this->refresh_token;
             }
+        }
+        else
+        {
+            exit('username or password can not be empty');
         }
         try {
             $response = $this->guzzle_call('POST', $url, $headers, $params=[], $data);
