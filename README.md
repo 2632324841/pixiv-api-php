@@ -7,6 +7,11 @@
 
 ## 实例
 ```php
+require_once __DIR__ . '/vendor/autoload.php';
+use pixiv\Aapi;
+use pixiv\Papi;
+use pixiv\Ajax;
+
 //$ajax = new Ajax();
 //$cookie = '';
 //$ajax->set_init($cookie);
@@ -18,16 +23,17 @@
 //echo $re;
 
 //$Aapi = new Aapi();
-$Papi = new Papi;
+$Papi = new Papi();
 $username = '';
 $password = '';
 //$Aapi->login($username, $password);
-//$re = $Aapi->user_illusts('40291400');
-//print_r($re->json);
+//$Aapi->user_illusts('40291400');
+//print_r($Aapi->json);
 
 $Papi->login($username, $password);
-$re = $Papi->works(76788220);
-print_r($re);
+$Papi->works(76788220);
+echo 'StatusCode:'.$Papi->StatusCode;
+//print_r($Papi->json);
 
 //$re = $Aapi->illust_detail(76472054);
 
