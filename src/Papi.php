@@ -16,6 +16,13 @@ use pixiv\Api;
  */
 class Papi extends Api{
     
+    public $StatusCode;
+    public $Headers;
+    public $ReasonPhrase;
+    public $body;
+    public $getContents;
+    public $json;
+    
     public function auth_guzzle_call($method, $url, $headers=[], $params=[], $data=[]){
         $headers['Referer'] = 'http://spapi.pixiv.net/';
         $headers['User-Agent'] = 'PixivIOSApp/5.8.7';
@@ -26,14 +33,13 @@ class Papi extends Api{
     
     # 处理返回的数据
     public function parse_result($req){
-        $result = new \stdClass();
-        $result->StatusCode = $req->getStatusCode();
-        $result->Headers = $req->getHeaders();
-        $result->ReasonPhrase = $req->getReasonPhrase();
-        $result->body = $req->getBody();
-        $result->getContents = (string)$req->getBody();
-        $result->json = json_decode((string)$req->getBody(),TRUE);
-        return $result;
+        $this->StatusCode = $req->getStatusCode();
+        $this->Headers = $req->getHeaders();
+        $this->ReasonPhrase = $req->getReasonPhrase();
+        $this->body = $req->getBody();
+        $this->getContents = (string)$req->getBody();
+        $this->json = json_decode((string)$req->getBody(),TRUE);
+        return $this;
     }
      
     # 翻页参数
