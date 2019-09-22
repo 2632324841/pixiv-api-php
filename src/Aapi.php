@@ -17,7 +17,12 @@ use pixiv\Api;
 class Aapi extends Api{
     //put your code here
     protected $hosts = "https://app-api.pixiv.net";
-    
+    public $StatusCode;
+    public $Headers;
+    public $ReasonPhrase;
+    public $body;
+    public $getContents;
+    public $json;
     # 用户详情
     public function user_detail($user_id , $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/user/detail';
@@ -963,14 +968,13 @@ class Aapi extends Api{
     
     # 处理返回的数据
     public function parse_result($req){
-        $result = new \stdClass();
-        $result->StatusCode = $req->getStatusCode();
-        $result->Headers = $req->getHeaders();
-        $result->ReasonPhrase = $req->getReasonPhrase();
-        $result->body = $req->getBody();
-        $result->getContents = (string)$req->getBody();
-        $result->json = json_decode((string)$req->getBody(),TRUE);
-        return $result;
+        $this->StatusCode = $req->getStatusCode();
+        $this->Headers = $req->getHeaders();
+        $this->ReasonPhrase = $req->getReasonPhrase();
+        $this->body = $req->getBody();
+        $this->getContents = (string)$req->getBody();
+        $this->json = json_decode((string)$req->getBody(),TRUE);
+        return $this;
     }
 
     public function no_auth_guzzle_call($method, $url, $headers=[], $params=[], $data=[], $req_auth=True){
