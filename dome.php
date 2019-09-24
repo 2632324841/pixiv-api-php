@@ -15,17 +15,23 @@ use pixiv\Ajax;
 //$re = $ajax->search_illusts('碧蓝航线', 1, 'safe', 's_tag', $p=1, $order=null, $ratio=0.5, $wlt=1920, $wgt=null, $hlt=1080, $hgt=null);
 //echo $re;
 
-//$Aapi = new Aapi();
-$Papi = new Papi();
-$username = '';
-$password = '';
+
+
+$Aapi = new Aapi();
+//$Papi = new Papi();
+//$username = '';
+//$password = '';
 //$Aapi->login($username, $password);
 //$Aapi->user_illusts('40291400');
 //print_r($Aapi->json);
 
-$Papi->login($username, $password);
-$Papi->works(76788220);
-echo 'StatusCode:'.$Papi->StatusCode;
+//下载动图
+$Aapi->ugoira_meta_save(72729032);
+
+
+//$Papi->login($username, $password);
+//$Papi->works(76788220);
+//echo 'StatusCode:'.$Papi->StatusCode;
 //print_r($Papi->json);
 
 //$re = $Aapi->illust_detail(76472054);
