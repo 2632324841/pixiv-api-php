@@ -23,6 +23,67 @@ class Aapi extends Api{
     public $body;
     public $getContents;
     public $json;
+    
+    public function ugoira_meta($illust_id){
+        $url = "https://www.pixiv.net/ajax/illust/$illust_id/ugoira_meta";
+        $r = $this->guzzle_call('GET', $url);
+        return $this->parse_result($r);
+    }
+    
+    # tpye = ['originalSrc','src']
+    public function ugoira_meta_save($illust_id, $savePath='image/', $fileName='', $tpye='originalSrc', $is_save=True){
+        //临时文件目录
+        $tempPath = 'temp/';
+        //zip目录
+        $zipPath = 'zip/';
+        $json = $this->ugoira_meta($illust_id)->json;
+        if($json['error']){
+            return FALSE;
+        }
+        $savePath = iconv('utf-8', 'gbk', $savePath);
+        if(empty($fileName)){
+            $fileName = $illust_id.'.gif';
+        }else{
+            $fileName = iconv('utf-8', 'gbk', $savePath);
+        }
+        if(!is_dir($savePath)){
+            mkdir($savePath, 0777);
+        }
+        $body = $json['body'];
+        //获取zip文件名
+        $zipFile = substr($body[$tpye], strrpos($body[$tpye], '/')+1);
+        //下载zip
+        $is_ok = $this->download($body[$tpye], $zipPath, $zipFile);
+        if($is_ok){
+            //解压
+            $this->decompression($zipPath.$zipFile, $tempPath);
+            $frames = [];
+            $delay = [];
+            foreach ($body['frames'] as $val){
+                $frames[] = $tempPath.$val['file'];
+                //好像P站的更准确
+                $delay[] = $val['delay']/10;
+            }
+            //创建GIF
+            if($this->create_gif($frames, $delay, $savePath.$fileName)){
+                //删除临时文件
+                foreach ($frames as $val){
+                    unlink($val);
+                }
+                //删除zip文件
+                if($is_save){
+                    unlink($zipPath.$zipFile);
+                }
+                return TRUE;
+            }else{
+                return FALSE;
+            }
+        }
+        else{
+            return FALSE;
+        }
+    }
+
     # 用户详情
     public function user_detail($user_id , $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/user/detail';
@@ -52,7 +113,7 @@ class Aapi extends Api{
         return $this->parse_result($r);
     }
 	
-	# 用户小说
+    # 用户小说
     public function user_novels($user_id, $filter='for_ios', $offset=null, $req_auth=True){
         $url = $this->hosts.'/v1/user/novels';
         $params = [
