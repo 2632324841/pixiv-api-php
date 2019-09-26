@@ -24,7 +24,7 @@ $Aapi = new Aapi();
 //$Aapi->login($username, $password);
 //$Aapi->user_illusts('40291400');
 //print_r($Aapi->json);
-
+//ecoh $Aapi->StatusCode;
 //下载动图
 $Aapi->ugoira_meta_save(72729032);
 

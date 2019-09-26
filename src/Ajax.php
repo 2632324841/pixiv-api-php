@@ -124,6 +124,7 @@ class Ajax extends Api{
         }
     }
     
+	# date 20190926
     public function ranking($date=Null, $mode='ranking', $mode_rank='daily', $content_rank='all', $p=1){
         $url = 'https://www.pixiv.net/touch/ajax_api/ajax_api.php';
         $params = [
