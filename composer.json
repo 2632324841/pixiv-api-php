@@ -1,4 +1,10 @@
 {
+	"repositories":{
+		"packagist":{
+			"type":"composer",
+			"url":"https://packagist.phpcomposer.com"
+		}
+	},
 	"license":"BSD-3-Clause",
 	"version":"1.2",
     "name": "deadlymous/pixiv_api",
