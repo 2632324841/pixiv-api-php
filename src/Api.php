@@ -133,7 +133,7 @@ class Api {
         if(is_array($json)){
             header('Content-Type:application/json; charset=utf-8');
             http_response_code($code);
-            exit(json_encode($json,JSON_UNESCAPED_UNICODE));
+            exit(json_encode($json, JSON_UNESCAPED_UNICODE));
         }
         return FALSE;
     }
