@@ -1,6 +1,6 @@
 {
 	"license":"BSD-3-Clause",
-	"version":"1.2",
+	"version":"1.2.0",
     "name": "deadlymous/pixiv_api",
     "type": "library",
 	"keywords": [
