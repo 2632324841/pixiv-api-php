@@ -25,10 +25,14 @@ class Api {
     protected $user_id = 0;
     protected $save_time = 3600;
     protected $client;
-    protected $token_path = './';
-    public function __construct() {
+    protected $token_path;
+    public function __construct($username='',$password='', $token_path='./') {
         $jar = new \GuzzleHttp\Cookie\CookieJar();
         $this->client = new GuzzleHttp\Client(['verify' => false,'cookies' => $jar,'http_errors' => false]);
+        $this->token_path = $token_path;
+        if(!empty($username) && !empty($password)){
+            $this->auth($username, $password);
+        }
     }
     
     public function auth($username=NULL, $password=NULL, $refresh_token=NULL){
@@ -139,7 +143,6 @@ class Api {
     }
     
     public function download($url, $path = 'image/', $fileName = '', $headers = [ 'Referer' => 'https://app-api.pixiv.net/' ]){
-        
         try{
             $path = iconv('utf-8', 'gbk', $path);
             if(empty($fileName)){
@@ -156,7 +159,8 @@ class Api {
                 return 1;
             }
             $response = $this->client->get($url, ['headers'=> $headers,'save_to'=> $saveFilePath]);
-            if($response->getReasonPhrase() == 'OK'){
+            $code = $response->getStatusCode();
+            if($code <=206){
                 return TRUE;
             }
             else
@@ -175,7 +179,7 @@ class Api {
             return FALSE;
         }
         if(!is_dir($savePath)){
-            return FALSE;
+            mkdir($savePath, 0777);
         }
         $zip = new \ZipArchive();
         if($zip->open($filePath )=== TRUE){ 
@@ -187,18 +191,21 @@ class Api {
         }
     }
     
-    public function create_gif($frames, $delay, $filePath){
-        try{
+    public function create_gif($frames, $delay, $filePath=NULL){
+        //try{
             $gc = new GifCreator();
             $gifBinary = $gc->create($frames, $delay);
-            file_put_contents($filePath, $gifBinary);
-            return TRUE;
-        } catch (\Exception $ex) {
+            if(!empty($filePath)){
+                file_put_contents($filePath, $gifBinary);
+                return TRUE;
+            }else{
+                return $gifBinary;
+            }
+            
+        /*} catch (\Exception $ex) {
             return FALSE;
-        }
+        }*/
     }
-
-    
 
     public function guzzle_call($method, $url, $headers=[], $params=[], $data=[], $json=[], $timeout=10){
         $client = $this->client;

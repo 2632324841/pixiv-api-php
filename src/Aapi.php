@@ -31,7 +31,7 @@ class Aapi extends Api{
     }
     
     # tpye = ['originalSrc','src']
-    public function ugoira_meta_save($illust_id, $savePath='image/', $fileName='', $tpye='originalSrc', $is_save=True){
+    public function ugoira_meta_save($illust_id, $is_return=FALSE, $savePath='image/', $fileName='', $tpye='src', $is_save=FALSE){
         //临时文件目录
         $tempPath = 'temp/';
         //zip目录
@@ -64,19 +64,32 @@ class Aapi extends Api{
                 //好像P站的更准确
                 $delay[] = $val['delay']/10;
             }
-            //创建GIF
-            if($this->create_gif($frames, $delay, $savePath.$fileName)){
+            if($is_return){
+                $gif = $this->create_gif($frames, $delay);
                 //删除临时文件
                 foreach ($frames as $val){
                     unlink($val);
                 }
                 //删除zip文件
-                if($is_save){
+                if(!$is_save){
                     unlink($zipPath.$zipFile);
                 }
-                return TRUE;
+                return $gif;
             }else{
-                return FALSE;
+                //创建GIF
+                if($this->create_gif($frames, $delay, $savePath.$fileName)){
+                    //删除临时文件
+                    foreach ($frames as $val){
+                        unlink($val);
+                    }
+                    //删除zip文件
+                    if(!$is_save){
+                        unlink($zipPath.$zipFile);
+                    }
+                    return TRUE;
+                }else{
+                    return FALSE;
+                }
             }
         }
         else{
@@ -97,7 +110,7 @@ class Aapi extends Api{
     
     # 用户作品列表
     # type: [illust, manga]
-    public function user_illusts($user_id, $type='illust', $filter='for_ios', $offset=null, $req_auth=True){
+    public function user_illusts($user_id, $type='illust', $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/user/illusts';
         $params = [
             'user_id'=> $user_id,
@@ -114,7 +127,7 @@ class Aapi extends Api{
     }
 	
     # 用户小说
-    public function user_novels($user_id, $filter='for_ios', $offset=null, $req_auth=True){
+    public function user_novels($user_id, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/user/novels';
         $params = [
             'user_id'=> $user_id,
@@ -129,7 +142,7 @@ class Aapi extends Api{
 
     # 用户收藏作品列表
     # tag: 从 user_bookmark_tags_illust 获取的收藏标签
-    public function user_bookmarks_illust($user_id, $restrict, $filter='for_ios', $max_bookmark_id=null, $tag=null, $req_auth=True){
+    public function user_bookmarks_illust($user_id, $restrict='public', $max_bookmark_id=null, $tag=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/user/bookmarks/illust';
         $params = [
             'user_id'=> $user_id,
@@ -148,7 +161,7 @@ class Aapi extends Api{
     
     # 用户收藏作品列表（小说）
     # tag: 从 user_bookmark_tags_illust 获取的收藏标签
-    public function user_bookmarks_novel($user_id, $restrict='public', $filter='for_ios', $max_bookmark_id=null, $tag=null, $offset=null, $req_auth=True){
+    public function user_bookmarks_novel($user_id, $restrict='public', $max_bookmark_id=null, $tag=null, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/user/bookmarks/novel';
         $params = [
             'user_id'=> $user_id,
@@ -170,7 +183,7 @@ class Aapi extends Api{
     
     # 用户收藏作品列表（小说）
     # tag: 从 user_bookmark_tags_illust 获取的收藏标签
-    public function user_bookmarks_novel_tag($user_id, $restrict='public', $filter='for_ios', $max_bookmark_id=null, $tag=null, $offset=null, $req_auth=True){
+    public function user_bookmarks_novel_tag($user_id, $restrict='public', $max_bookmark_id=null, $tag=null, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/user/bookmarks/novel';
         $params = [
             'restrict'=> $user_id,
@@ -191,7 +204,7 @@ class Aapi extends Api{
     }
     
     # 你的 - 小说书签
-    public function markers_novel($filter='for_ios', $offset=null, $req_auth=True){
+    public function markers_novel($offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v2/novel/markers';
         $params = [
             'filter'=> $filter,
@@ -219,7 +232,7 @@ class Aapi extends Api{
     
     # 大家的新作
     # content_type: [illust, manga]
-    public function illust_new($content_type='illust', $filter='for_ios', $offset=null, $req_auth=True){
+    public function illust_new($content_type='illust', $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v2/illust/follow';
         $params = [
             'content_type'=> $content_type,
@@ -243,7 +256,7 @@ class Aapi extends Api{
     }
     
     # 查看推荐作家
-    public function recommended_user($filter='for_ios', $offset=null, $req_auth=True){
+    public function recommended_user($offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/user/recommended';
         $params = [
             'filter'=> $filter,
@@ -282,7 +295,7 @@ class Aapi extends Api{
     }
     
     # 相关作品列表
-    public function illust_related($illust_id, $filter='for_ios', $seed_illust_ids=null, $req_auth=True){
+    public function illust_related($illust_id, $seed_illust_ids=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v2/illust/related';
         $params = [
             'illust_id'=> $illust_id,
@@ -302,8 +315,8 @@ class Aapi extends Api{
     
     # 插画推荐 (Home - Main)
     # content_type: [illust, manga]
-    public function illust_recommended($content_type='illust', $include_ranking_label=true, $filter='for_ios', $max_bookmark_id_for_recommend=null, $min_bookmark_id_for_recent_illust=null,
-    $offset=null, $include_ranking_illusts=null, $bookmark_illust_ids=null, $include_privacy_policy=null, $req_auth=True){
+    public function illust_recommended($content_type='illust', $include_ranking_label=true, $max_bookmark_id_for_recommend=null, $min_bookmark_id_for_recent_illust=null,
+    $offset=null, $include_ranking_illusts=null, $bookmark_illust_ids=null, $include_privacy_policy=null, $filter='for_ios', $req_auth=True){
         if($req_auth){
             $url = $this->hosts.'/v1/illust/recommended';
         }else{
@@ -346,7 +359,7 @@ class Aapi extends Api{
     # date: '2016-08-01'
     # mode (Past): [day, week, month, day_male, day_female, week_original, week_rookie,
     #               day_r18, day_male_r18, day_female_r18, week_r18, week_r18g]
-    public function illust_ranking($date=null, $mode='day', $filter='for_ios', $offset=null, $req_auth=True){
+    public function illust_ranking($date=null, $mode='day', $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/illust/ranking';
         $params = [
             'mode'=> $mode,
@@ -367,7 +380,7 @@ class Aapi extends Api{
     # date: '2016-08-01'
     # mode (Past): [day, week, month, day_male, day_female, week_original, week_rookie,
     #               day_r18, day_male_r18, day_female_r18, week_r18, week_r18g]
-    public function novel_ranking($mode='day', $filter='for_ios', $date=null, $offset=null, $req_auth=True){
+    public function novel_ranking($date=null, $mode='day', $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/novel/ranking';
         $params = [
             'mode'=> $mode,
@@ -384,7 +397,7 @@ class Aapi extends Api{
     }
     
     # 文章特辑  
-    public function spotlight_articles($category='all', $date=null, $offset=null, $req_auth=True){
+    public function spotlight_articles($date=null, $category='all', $offset=null, $req_auth=True){
         $url = $this->hosts.'/v1/spotlight/articles';
         $params = [
             'category'=> $category,
@@ -404,6 +417,7 @@ class Aapi extends Api{
         $url = $this->hosts.'/v1/search/autocomplete';
         $params = [
             'word'=> $word,
+            'for_ios'=> $filter,
         ];
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
@@ -427,7 +441,7 @@ class Aapi extends Api{
     #   title_and_caption       - 标题说明文
     # sort: [date_desc, date_asc]
     # duration: [within_last_day, within_last_week, within_last_month]
-    public function search_illust($word, $search_target='partial_match_for_tags', $sort='date_desc', $duration=null, $filter='for_ios', $offset=null, $req_auth=True){
+    public function search_illust($word, $search_target='partial_match_for_tags', $sort='date_desc', $duration=null, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/search/illust';
         $params = [
             'word'=> $word,
@@ -452,7 +466,7 @@ class Aapi extends Api{
     #   title_and_caption       - 标题说明文
     # sort: [date_desc, date_asc]
     # duration: [within_last_day, within_last_week, within_last_month]
-    public function search_illust_popular_preview($word, $search_target='partial_match_for_tags', $sort='date_desc', $duration=null, $filter='for_ios', $offset=null, $req_auth=True){
+    public function search_illust_popular_preview($word, $search_target='partial_match_for_tags', $sort='date_desc', $duration=null, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/search/popular-preview/illust';
         $params = [
             'word'=> $word,
@@ -478,7 +492,7 @@ class Aapi extends Api{
     }
     
     # 搜索小说
-    public function search_novel($word, $search_target='partial_match_for_tags', $sort='date_desc', $duration=null, $filter='for_ios', $offset=null, $req_auth=True){
+    public function search_novel($word, $search_target='partial_match_for_tags', $sort='date_desc', $duration=null, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/search/novel';
         $params = [
             'word'=> $word,
@@ -497,7 +511,7 @@ class Aapi extends Api{
     }
     
     # 搜索流行小说
-    public function search_novel_popular_preview($word, $search_target='partial_match_for_tags', $sort='date_desc', $duration=null, $filter='for_ios', $offset=null, $req_auth=True){
+    public function search_novel_popular_preview($word, $search_target='partial_match_for_tags', $sort='date_desc', $duration=null, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/search/popular-preview/novel';
         $params = [
             'word'=> $word,
@@ -516,7 +530,7 @@ class Aapi extends Api{
     }
 
     # 搜索插图书签范围
-    public function search_illust_bookmark_ranges($word, $search_target='partial_match_for_tags', $sort='date_desc', $duration=null, $filter='for_ios', $offset=null, $req_auth=True){
+    public function search_illust_bookmark_ranges($word, $search_target='partial_match_for_tags', $sort='date_desc', $duration=null, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/search/bookmark-ranges/illus';
         $params = [
             'word'=> $word,
@@ -535,7 +549,7 @@ class Aapi extends Api{
     }
     
     # 搜索插图书签范围
-    public function search_novel_bookmark_ranges($word, $search_target='partial_match_for_tags', $sort='date_desc', $duration=null, $filter='for_ios', $offset=null, $req_auth=True){
+    public function search_novel_bookmark_ranges($word, $search_target='partial_match_for_tags', $sort='date_desc', $duration=null, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/search/bookmark-ranges/novel';
         $params = [
             'word'=> $word,
@@ -553,7 +567,7 @@ class Aapi extends Api{
         return $this->parse_result($r);
     }
     
-    public function search_user($word, $filter=null, $offset=null,$req_auth=True){
+    public function search_user($word, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/search/bookmark-ranges/novel';
         $params = [
             'word'=> $word,
@@ -566,10 +580,11 @@ class Aapi extends Api{
         return $this->parse_result($r);
     }
 
-    public function search_auto_complete_v2($word, $req_auth=True){
+    public function search_auto_complete_v2($word, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v2/search/autocomplete';
         $params = [
             'word'=> $word,
+            'filter'=> $filter,
         ];
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
@@ -583,7 +598,7 @@ class Aapi extends Api{
     }
     
     #
-    public function illust_comments_v2($illust_id, $offset=null, $filter='for_ios', $include_total_comments=null, $req_auth=True){
+    public function illust_comments_v2($illust_id, $offset=null, $include_total_comments=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v2/illust/comments';
         $params = [
             'illust_id'=> $illust_id,  
@@ -600,7 +615,7 @@ class Aapi extends Api{
     }
 
     # 
-    public function illustCommentReplies($comment_id, $offset=null, $filter='for_ios', $req_auth=True){
+    public function illust_comment_replies($comment_id, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v2/illust/comments';
         $params = [
             'comment_id'=> $comment_id,
@@ -614,7 +629,7 @@ class Aapi extends Api{
     }
 
     # 
-    public function illust_new_v1($illust_id, $filter='for_ios', $offset=null, $req_auth=True){
+    public function illust_new_v1($illust_id, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/illust/new';
         $params = [
             'illust_id'=> $illust_id,
@@ -628,7 +643,7 @@ class Aapi extends Api{
     }
 
     #
-    public function illust_my_pixiv($filter='for_ios', $offset=null, $req_auth=True){
+    public function illust_my_pixiv($offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v2/illust/mypixiv';
         $params = [
             'filter'=> $filter,
@@ -641,7 +656,7 @@ class Aapi extends Api{
     }
 
     # 添加作品评论
-    public function illust_add_comment($illust_id, $comment,$parent_comment_id,$filter='for_ios', $req_auth=True){
+    public function illust_add_comment($illust_id, $comment, $parent_comment_id, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/illust/comment/add';
         $data = [
             'illust_id'=> $illust_id,
@@ -654,7 +669,7 @@ class Aapi extends Api{
     }
     
     # 添加小说评论
-    public function novel_add_comment($illust_id, $comment,$parent_comment_id,$filter='for_ios', $req_auth=True){
+    public function novel_add_comment($illust_id, $comment, $parent_comment_id, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/novel/comment/add';
         $data = [
             'illust_id'=> $illust_id,
@@ -736,7 +751,7 @@ class Aapi extends Api{
     }
     
     # 用户收藏标签列表
-    public function user_bookmark_tags_illust($restrict='public', $filter='for_ios', $offset=null, $req_auth=True){
+    public function user_bookmark_tags_illust($restrict='public', $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/user/bookmark-tags/illust';
         $params = [
             'restrict'=> $restrict,
@@ -750,7 +765,7 @@ class Aapi extends Api{
     }
 
     # Following用户列表
-    public function user_following($user_id, $restrict='public', $filter='for_ios', $offset=null, $req_auth=True){
+    public function user_following($user_id, $restrict='public', $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/user/following';
         $params = [
             'user_id'=> $user_id,
@@ -765,7 +780,7 @@ class Aapi extends Api{
     }
     
     #
-    public function user_follow_detail($user_id, $filter='for_ios', $offset=null, $req_auth=True){
+    public function user_follow_detail($user_id, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/user/follow/detail';
         $params = [
             'user_id'=> $user_id,
@@ -780,7 +795,7 @@ class Aapi extends Api{
 
 
     # Followers用户列表
-    public function user_follower($user_id, $filter='for_ios', $offset=null, $req_auth=True){
+    public function user_follower($user_id, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/user/follower';
         $params = [
             'user_id'=> $user_id,
@@ -807,7 +822,7 @@ class Aapi extends Api{
     }
 
     # 黑名单用户
-    public function user_list($user_id, $filter='for_ios', $offset=null, $req_auth=True){
+    public function user_list($user_id, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v2/user/list';
         $params = [
             'user_id'=> $user_id,
@@ -822,7 +837,7 @@ class Aapi extends Api{
     
     # 添加好P友
     # restrict: [public, private]
-    public function add_user($user_id, $restrict='public',$filter='for_ios', $req_auth=True){
+    public function add_user($user_id, $restrict='public', $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/user/follow/add';
         $data = [
             'user_id'=> $user_id,
@@ -845,133 +860,169 @@ class Aapi extends Api{
     }
     
     # 推荐漫画
-    public function manga_recommended($include_ranking_label=True, $filter='for_ios', $req_auth=True){
+    public function manga_recommended($include_ranking_label=True, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/manga/recommended';
         $params = [
             'include_ranking_label'=> $this->format_bool($include_ranking_label),
             'filter'=> $filter,
         ];
+        if($offset){
+            $params['offset'] = $offset;
+        }
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
     # 最新漫画
-    public function manga_new($content_type='manga', $filter='for_ios', $req_auth=True){
+    public function manga_new($content_type='manga', $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/manga/recommended';
         $params = [
             'content_type'=> $content_type,
             'filter'=> $filter,
         ];
+        if($offset){
+            $params['offset'] = $offset;
+        }
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
     # 推荐小说
-    public function novel_recommended($include_ranking_novels=True, $filter='for_ios', $req_auth=True){
+    public function novel_recommended($include_ranking_novels=True, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/manga/recommended';
         $params = [
             'include_ranking_novels'=> $this->format_bool($include_ranking_novels),
             'filter'=> $filter,
         ];
+        if($offset){
+            $params['offset'] = $offset;
+        }
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
     # 小说评论
-    public function novel_comments($novel_id, $include_total_comments=True, $filter='for_ios', $req_auth=True){
+    public function novel_comments($novel_id, $include_total_comments=True, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/novel/comments';
         $params = [
             'novel_id'=> $novel_id,
             'filter'=> $filter,
             'include_total_comments'=> $this->format_bool($include_total_comments),
         ];
+        if($offset){
+            $params['offset'] = $offset;
+        }
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
     # 小说评论v2
-    public function novel_comments_v2($novel_id, $filter='for_ios', $req_auth=True){
+    public function novel_comments_v2($novel_id, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v2/novel/comments';
         $params = [
             'novel_id'=> $novel_id,
             'filter'=> $filter,
         ];
+        if($offset){
+            $params['offset'] = $offset;
+        }
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
     # 小说评论、回复
-    public function novel_comment_replies($novel_id, $filter='for_ios', $req_auth=True){
+    public function novel_comment_replies($novel_id, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/novel/comment/replies';
         $params = [
             'comment_id'=> $novel_id,
             'filter'=> $filter,
         ];
+        if($offset){
+            $params['offset'] = $offset;
+        }
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
     # 小说系列
-    public function novel_series($series_id, $filter='for_ios', $req_auth=True){
+    public function novel_series($series_id, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/novel/series';
         $params = [
             'series_id'=> $series_id,
             'filter'=> $filter,
         ];
+        if($offset){
+            $params['offset'] = $offset;
+        }
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
     # 中篇小说
-    public function novel_detail($novel_id, $filter='for_ios', $req_auth=True){
+    public function novel_detail($novel_id, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v2/novel/detail';
         $params = [
             'novel_id'=> $novel_id,
             'filter'=> $filter,
         ];
+        if($offset){
+            $params['offset'] = $offset;
+        }
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
 
     # 小说文本
-    public function novel_text($novel_id, $filter='for_ios', $req_auth=True){
+    public function novel_text($novel_id, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/novel/text';
         $params = [
             'novel_id'=> $novel_id,
             'filter'=> $filter,
         ];
+        if($offset){
+            $params['offset'] = $offset;
+        }
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
     # 小说
-    public function novel_follow($restrict='all', $filter='for_ios', $req_auth=True){
+    public function novel_follow($restrict='all', $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/novel/follow';
         $params = [
             'restrict'=> $restrict,
             'filter'=> $filter,
         ];
+        if($offset){
+            $params['offset'] = $offset;
+        }
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
     # 我的小说
-    public function novel_my_pixiv($filter='for_ios', $req_auth=True){
+    public function novel_my_pixiv($offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v1/novel/mypixiv';
         $params = [
             'filter'=> $filter,
         ];
+        if($offset){
+            $params['offset'] = $offset;
+        }
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
     
     # 我的小说
-    public function novel_bookmark_detail($novel_id, $filter='for_ios', $req_auth=True){
+    public function novel_bookmark_detail($novel_id, $offset=null, $filter='for_ios', $req_auth=True){
         $url = $this->hosts.'/v2/novel/bookmark/detail';
         $params = [
             'novel_id'=> $novel_id,
             'filter'=> $filter,
         ];
+        if($offset){
+            $params['offset'] = $offset;
+        }
         $r = $this->no_auth_guzzle_call('GET', $url, $headers = [], $params, $data=[], $req_auth);
         return $this->parse_result($r);
     }
