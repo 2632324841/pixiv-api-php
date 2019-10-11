@@ -124,7 +124,12 @@ class Ajax extends Api{
         }
     }
     
-	# date 20190926
+    /*
+     * date 20190926
+     * mode ranking
+     * mode_rank daily 天 weekly 周 monthly 月 rookie 新人 original 原创 male 受男性欢迎 female 受女性欢迎 
+     * content_rank all 全部 illust 插图 ugoira 动图 manga 漫画 
+     */
     public function ranking($date=Null, $mode='ranking', $mode_rank='daily', $content_rank='all', $p=1){
         $url = 'https://www.pixiv.net/touch/ajax_api/ajax_api.php';
         $params = [
@@ -140,7 +145,7 @@ class Ajax extends Api{
         return $this->parse_result($r);
     }
     
-    public function popular_illust($mode='popular_illust', $type=null, $p=1){
+    public function popular_illust($type=null, $p=1, $mode='popular_illust'){
         $url = 'https://www.pixiv.net/touch/ajax_api/ajax_api.php';
         $params = [
             'mode'=> $mode,
@@ -174,31 +179,69 @@ class Ajax extends Api{
         return $this->parse_result($r);
     }
     
-    public function search_illusts($word, $include_meta=1, $mode='safe', $s_mode='s_tag', $p=1, $order=null, $ratio=null, $wlt=null, $wgt=null, $hlt=null, $hgt=null, $scd=null, $ecd=null, $blt=null, $bgt=null){
+    # $include_meta=1, $mode='safe', $s_mode='s_tag', $p=1, $order=null, $ratio=null, $wlt=null, $wgt=null, $hlt=null, $hgt=null, $scd=null, $ecd=null, $blt=null, $bgt=null, $tool=null
+    /*
+     * s_mode = ['s_tag_full','s_tc','s_tag',null]; 标签完全一致 标题说明文字  标签
+     * type = ['illust','manga','ugoira',null]; 插图 漫画 动图
+     * order popular_d 受全站欢迎 popular_male_d 受男性欢迎 popular_female_d 受女性欢迎 date 按旧排序 date_d 按新排序
+     * wlt 最低宽度 px
+     * wgt 最大宽度 px
+     * hlt 最低高度 px
+     * hgt 最大高度 px
+     * ratio 0.5 横图 -0.5 纵图 0 正方形图 null 默认
+     * tool SAI Photoshop 等等制图工具
+     * blt 最小收藏数
+     * bgt 最大收藏数
+     * scd 开始时间
+     * ecd 结尾时间
+     * mode r18 xxx safe r15 普通
+     */
+    public function search_illusts($word, $data){
         $url = 'https://www.pixiv.net/touch/ajax/search/illusts';
         $params = [
             'word'=> $word,
-            'mode'=> $mode,
-            's_mode'=> $s_mode,
-            'include_meta'=> $include_meta,
-            'p'=> $p,
-            'wlt'=> $wlt,
-            'wgt'=> $wgt,
-            'hlt'=> $hlt,
-            'hgt'=> $hgt,
-            'ratio'=> $ratio,
-            'scd'=> $scd,
-            'ecd'=> $ecd,
-            'blt'=> $blt,
-            'bgt'=> $bgt,
+            'mode'=> $this->params($data, 'mode', 'safe'),
+            's_mode'=> $this->params($data, 's_mode', 's_tag'),
+            'include_meta'=> $this->params($data, 'include_meta', 0),
+            'order'=> $this->params($data, 'order','date_d'),
+            'type'=> $this->params($data, 'type'),
+            'p'=> $this->params($data, 'p', 1),
+            'wlt'=> $this->params($data, 'wlt'),
+            'wgt'=> $this->params($data, 'wgt'),
+            'hlt'=> $this->params($data, 'hlt'),
+            'hgt'=> $this->params($data, 'hgt'),
+            'ratio'=> $this->params($data, 'ratio'),
+            'scd'=> $this->params($data, 'scd'),
+            'ecd'=> $this->params($data, 'ecd'),
+            'blt'=> $this->params($data, 'blt'),
+            'bgt'=> $this->params($data, 'bgt'),
+            'tool'=> $this->params($data, 'tool'),
         ];
-        if($order){
-            $params['order'] = $order;
-        }
         $r = $this->guzzle_call('GET', $url, $this->headers, $params);
         return $this->parse_result($r);
     }
     
+    public function params($data, $key, $value=NULL){
+        if(array_key_exists($key, $data)){
+            return $data[$key];
+        }else{
+            return $value;
+        }
+    }
+    
+    # $a['tool'] = 'sal'; 参数数组  键  默认值
+    /*public function params($data, $key, $value=NULL){
+        if(array_key_exists($key, $data)){
+            return $data;
+        }else if($value != NULL){
+            $data[$key] = $value;
+            return $data;
+        }else{
+            unset($data[$key]);
+            return $data;
+        }
+    }*/
+
     public function bookmark_new_illust($type='illusts', $include_meta=1 , $tag=null, $p=1){
         $url = 'https://www.pixiv.net/touch/ajax/follow/latest';
         $params = [
