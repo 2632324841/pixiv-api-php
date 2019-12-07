@@ -22,9 +22,18 @@ class Papi extends Api{
     public $body;
     public $getContents;
     public $json;
+    protected $hosts = 'https://public-api.secure.pixiv.net';
     
     public function auth_guzzle_call($method, $url, $headers=[], $params=[], $data=[]){
-        $headers['Referer'] = 'http://spapi.pixiv.net/';
+        if($this->request_type == 1){
+            $parse_url = parse_url($url);
+            $host = $parse_url['host'];
+            $json_data = $this->require_appapi_hosts($host);
+            $hosts = $json_data['Answer'][0]['data'];
+            $headers['Host'] = $host;
+            $url = str_replace($host, $hosts, $url);
+        }
+        $headers['Referer'] = 'https://spapi.pixiv.net/';
         $headers['User-Agent'] = 'PixivIOSApp/5.8.7';
         $headers['Authorization'] = 'Bearer '.$this->access_token;
         $r = $this->guzzle_call($method, $url, $headers, $params, $data);
@@ -82,66 +91,6 @@ class Papi extends Api{
             return 'true';
         }else{
             return 'false';
-        }
-    }
-    
-    public function ugoira_meta($illust_id){
-        $url = "https://www.pixiv.net/ajax/illust/$illust_id/ugoira_meta";
-        $r = $this->guzzle_call('GET', $url);
-        return $this->parse_result($r);
-    }
-    
-    # tpye = ['originalSrc','src']
-    public function ugoira_meta_save($illust_id, $savePath='image/', $fileName='', $tpye='originalSrc', $is_save=True){
-        //临时文件目录
-        $tempPath = 'temp/';
-        //zip目录
-        $zipPath = 'zip/';
-        $json = $this->ugoira_meta($illust_id)->json;
-        if($json['error']){
-            return FALSE;
-        }
-        $savePath = iconv('utf-8', 'gbk', $savePath);
-        if(empty($fileName)){
-            $fileName = $illust_id.'.gif';
-        }else{
-            $fileName = iconv('utf-8', 'gbk', $savePath);
-        }
-        if(!is_dir($savePath)){
-            mkdir($savePath, 0777);
-        }
-        $body = $json['body'];
-        //获取zip文件名
-        $zipFile = substr($body[$tpye], strrpos($body[$tpye], '/')+1);
-        //下载zip
-        $is_ok = $this->download($body[$tpye], $zipPath, $zipFile);
-        if($is_ok){
-            //解压
-            $this->decompression($zipPath.$zipFile, $tempPath);
-            $frames = [];
-            $delay = [];
-            foreach ($body['frames'] as $val){
-                $frames[] = $tempPath.$val['file'];
-                //好像P站的更准确
-                $delay[] = $val['delay']/10;
-            }
-            //创建GIF
-            if($this->create_gif($frames, $delay, $savePath.$fileName)){
-                //删除临时文件
-                foreach ($frames as $val){
-                    unlink($val);
-                }
-                //删除zip文件
-                if($is_save){
-                    unlink($zipPath.$zipFile);
-                }
-                return TRUE;
-            }else{
-                return FALSE;
-            }
-        }
-        else{
-            return FALSE;
         }
     }
     

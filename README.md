@@ -30,6 +30,7 @@ $Aapi = new Aapi();
 //$password = '';
 //$Aapi->login($username, $password);
 //$Aapi->user_illusts('40291400');
+//ecoh $Aapi->StatusCode;
 //print_r($Aapi->json);
 
 //下载动图

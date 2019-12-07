@@ -1,6 +1,7 @@
 {
+
 	"license":"BSD-3-Clause",
-	"version":"1.2.0",
+	"version":"1.1",
     "name": "deadlymous/pixiv_api",
     "type": "library",
 	"keywords": [
@@ -12,7 +13,8 @@
     "require": {
 		"php":">=5.4",
         "guzzlehttp/guzzle": "~6.0",
-		"sybio/gif-creator": "dev-master"
+		"sybio/gif-creator": "dev-master",
+		"voku/simple_html_dom": "dev-master"
     },
     "authors": [
         {
