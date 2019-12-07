@@ -23,8 +23,8 @@ $client = new GuzzleHttp\Client(['verify' => FALSE, 'http_errors' => FALSE]);
 
 
 $Aapi = new Aapi();
-$username = '2632324841@qq.com';
-$password = 'wasd123456';
+$username = '';
+$password = '';
 $Aapi->request_type = 1;
 $Aapi->login($username, $password);
 $Aapi->user_illusts('40291400');
