@@ -17,18 +17,41 @@ use GifCreator\GifCreator;
  * @author JC
  */
 class Api {
-    protected $client_id = 'KzEZED7aC0vird8jWyHM38mXjNTY';
-    protected $client_secret = 'W9JZoJe00qPvJsiyCGT3CCtC6ZUtdpKpzMbNlUGP';
+    protected $client_id = 'MOBrBDS8blbauoSck0ZfDbtuzpyT';
+    protected $client_secret = 'lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj';
     protected $hash_secret = '28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c';
+    protected $device_token = '416eeaafe17577e471b35d2cee7cdfdc';
     protected $access_token;
     protected $refresh_token;
     protected $user_id = 0;
     protected $save_time = 3600;
     protected $client;
+<<<<<<< Updated upstream
     protected $token_path = './';
     public function __construct() {
         $jar = new \GuzzleHttp\Cookie\CookieJar();
         $this->client = new GuzzleHttp\Client(['verify' => false,'cookies' => $jar,'http_errors' => false]);
+=======
+    protected $token_path;
+    protected $lang;
+    protected $parse_url;
+    
+    //public $hosts = 'https://app-api.pixiv.net';
+    public $request_type;
+    
+    public function __construct($username='',$password='', $request_type=0, $lang='zh-cn', $token_path='./') {
+        $jar = new \GuzzleHttp\Cookie\CookieJar();
+        $this->client = new GuzzleHttp\Client(['verify' => FALSE, 'cookies' => $jar, 'http_errors' => FALSE, 'allow_redirects'=>TRUE]);
+        $this->token_path = $token_path;
+        $this->lang = $lang;
+        $this->request_type = $request_type;
+        if($this->request_type == 1){
+            $this->hosts = 'https://'.$this->require_appapi_hosts('oauth.secure.pixiv.net');
+        }
+        if(!empty($username) && !empty($password)){
+            $this->auth($username, $password);
+        }
+>>>>>>> Stashed changes
     }
     
     public function auth($username=NULL, $password=NULL, $refresh_token=NULL){
@@ -53,23 +76,30 @@ class Api {
                 return 1;
             }
         }
-        //获取token
-        $url = 'https://oauth.secure.pixiv.net/auth/token';
+         //获取token
+        $time = gmdate('Y-m-dTH:i:s+00:00');
+        $time = str_replace('GM', '', $time);
         $headers = [
-            'App-OS'=> 'ios',
-            'Accept-Language'=> 'en-us',
-            'App-OS-Version'=> '12.0.1',
-            'App-Version'=> '7.6.2',
-            'User-Agent'=> 'PixivIOSApp/7.6.2 (iOS 12.0.1; iPhone8,2)',
-            'X-Client-Time'=> time(),
-            'X-Client-Hash'=> md5(time().$this->hash_secret),
+            'Accept-Language'=> $this->lang,
+            'User-Agent'=> 'PixivAndroidApp/5.0.64 (Android 6.0)',
+            'X-Client-Time'=> $time,
+            'X-Client-Hash'=> md5($time.$this->hash_secret),
         ];
+        $url = "https://oauth.secure.pixiv.net/auth/token";
         $data = [
             'get_secure_url'=>1,
-            'include_policy'=>1,
+            //'include_policy'=>1,
             'client_id'=> $this->client_id,
             'client_secret'=> $this->client_secret,
         ];
+        if($this->request_type == 1){
+            $parse_url = parse_url($url);
+            $host = $parse_url['host'];
+            $json_data = $this->require_appapi_hosts($host);
+            $hosts = $json_data['Answer'][0]['data'];
+            $headers['Host'] = $host;
+            $url = str_replace($host, $hosts, $url);
+        }
         if($username != NULL && $password != NULL)
         {
             $data['grant_type'] = 'password';
@@ -94,7 +124,7 @@ class Api {
         }
         try {
             $response = $this->guzzle_call('POST', $url, $headers, $params=[], $data);
-        
+            
             if($response->getStatusCode() == 200)
             {
                 $json = json_decode((string)$response->getBody(),true);
@@ -106,12 +136,20 @@ class Api {
                 return 1;
             }
             $re = json_decode((string)$response->getBody(),TRUE);
+            exit((string)$response->getBody());
             if($re['has_error']){
-                exit($re['errors']['system']['message']);
+                exit('Error：'.$re['errors']['system']['message']);
             }
         } catch (RequestException $e) {
             exit($e->getMessage());
         }
+    }
+    
+    public function require_appapi_hosts($hostname='app-api.pixiv.net'){
+        $url = "https://1.0.0.1/dns-query?ct=application/dns-json&name=$hostname&type=A&do=false&cd=false";
+        $r = $this->guzzle_call('GET', $url);
+        $json = json_decode($r->getBody(), TRUE);
+        return $json;
     }
     
     public function set_auth($access_token,$refresh_token=NULL){
@@ -125,8 +163,8 @@ class Api {
     }
 
     
-    public function login($username,$password){
-        return $this->auth($username,$password);
+    public function login($username, $password){
+        return $this->auth($username, $password);
     }
     
     public function json($json, $code = 200){
@@ -187,20 +225,38 @@ class Api {
         }
     }
     
+<<<<<<< Updated upstream
     public function create_gif($frames, $delay, $filePath){
         try{
             $gc = new GifCreator();
             $gifBinary = $gc->create($frames, $delay);
             file_put_contents($filePath, $gifBinary);
             return TRUE;
+=======
+    public function create_gif($frames, $delay, $filePath=NULL){
+        try{
+            $gc = new GifCreator();
+            $gifBinary = $gc->create($frames, $delay);
+            if(!empty($filePath)){
+                file_put_contents($filePath, $gifBinary);
+                return TRUE;
+            }else{
+                return $gifBinary;
+            }
+            
+>>>>>>> Stashed changes
         } catch (\Exception $ex) {
             return FALSE;
         }
     }
 
+<<<<<<< Updated upstream
     
 
     public function guzzle_call($method, $url, $headers=[], $params=[], $data=[], $json=[], $timeout=10){
+=======
+    public function guzzle_call($method, $url, $headers=[], $params=[], $data=[], $allow_redirects=True, $json=[], $timeout=10){
+>>>>>>> Stashed changes
         $client = $this->client;
         if($method == 'GET')
         {
@@ -208,6 +264,7 @@ class Api {
                 'query' => $params,
                 'timeout'=>$timeout,
                 'headers'=>$headers,
+                'allow_redirects'=>$allow_redirects,
             ];
             if(!$params){
                 unset($options['query']);
@@ -220,6 +277,7 @@ class Api {
                 'form_params' => $data,
                 'timeout'=>$timeout,
                 'headers'=>$headers,
+                'allow_redirects'=>$allow_redirects,
             ];
             if(!$params){
                 unset($options['query']);
@@ -233,6 +291,7 @@ class Api {
                 'json' => $json,
                 'timeout'=>$timeout,
                 'headers'=>$headers,
+                'allow_redirects'=>$allow_redirects,
             ];
             if(!$params){
                 unset($options['query']);
@@ -245,6 +304,7 @@ class Api {
                 'form_params' => $data,
                 'timeout'=>$timeout,
                 'headers'=>$headers,
+                'allow_redirects'=>$allow_redirects,
             ];
             if(!$params){
                 unset($options['query']);

@@ -4,7 +4,12 @@ require_once __DIR__ . '/vendor/autoload.php';
 use pixiv\Aapi;
 use pixiv\Papi;
 use pixiv\Ajax;
+use GuzzleHttp;
 
+$client = new GuzzleHttp\Client(['verify' => FALSE, 'http_errors' => FALSE]);
+
+
+<<<<<<< Updated upstream
 //$ajax = new Ajax();
 //$cookie = '';
 //$ajax->set_init($cookie);
@@ -19,17 +24,41 @@ use pixiv\Ajax;
 
 $Aapi = new Aapi();
 //$Papi = new Papi();
+=======
+$ajax = new Ajax();
+//设置 页面上的cookie
+$cookie = '';
+//设置cookie
+$ajax->set_init($cookie);
+//# yyyyMMdd
+//$ajax->ranking('20190912');
+//$ajax->popular_illust();
+//# $wlt 最小宽度 $wgt 最大宽度
+$ajax->search_illusts('碧蓝航线', 1, 'safe', 's_tag', $p=1, $order=null, $ratio=0.5, $wlt=1920, $wgt=null, $hlt=1080, $hgt=null);
+$ajax->all_activity();
+//$ajax->search_illusts_pc('プリンツ・オイゲン(アズールレーン)');
+//print_r($ajax->json);
+
+
+//$Aapi = new Aapi();
+>>>>>>> Stashed changes
 //$username = '';
 //$password = '';
+//$Aapi->request_type = 1;
 //$Aapi->login($username, $password);
 //$Aapi->user_illusts('40291400');
 //print_r($Aapi->json);
+<<<<<<< Updated upstream
 
+=======
+//echo $Aapi->StatusCode;
+>>>>>>> Stashed changes
 //下载动图
 $Aapi->ugoira_meta_save(72729032);
 
-
+//$Papi = new Papi();
 //$Papi->login($username, $password);
+//$Papi->request_type=1;
 //$Papi->works(76788220);
 //echo 'StatusCode:'.$Papi->StatusCode;
 //print_r($Papi->json);
