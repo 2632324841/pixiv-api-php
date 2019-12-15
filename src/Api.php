@@ -26,6 +26,7 @@ class Api {
     protected $user_id = 0;
     protected $save_time = 3600;
     protected $client;
+<<<<<<< HEAD
 <<<<<<< Updated upstream
     protected $token_path = './';
     public function __construct() {
@@ -41,6 +42,17 @@ class Api {
     
     public function __construct($username='',$password='', $request_type=0, $lang='zh-cn', $token_path='./') {
         $jar = new \GuzzleHttp\Cookie\CookieJar();
+=======
+    protected $token_path;
+    protected $lang;
+    protected $parse_url;
+    
+    //public $hosts = 'https://app-api.pixiv.net';
+    public $request_type;
+    
+    public function __construct($username='',$password='', $request_type=0, $lang='zh-cn', $token_path='./') {
+        $jar = new \GuzzleHttp\Cookie\CookieJar();
+>>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
         $this->client = new GuzzleHttp\Client(['verify' => FALSE, 'cookies' => $jar, 'http_errors' => FALSE, 'allow_redirects'=>TRUE]);
         $this->token_path = $token_path;
         $this->lang = $lang;
@@ -51,7 +63,10 @@ class Api {
         if(!empty($username) && !empty($password)){
             $this->auth($username, $password);
         }
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
     }
     
     public function auth($username=NULL, $password=NULL, $refresh_token=NULL){
@@ -171,13 +186,12 @@ class Api {
         if(is_array($json)){
             header('Content-Type:application/json; charset=utf-8');
             http_response_code($code);
-            exit(json_encode($json,JSON_UNESCAPED_UNICODE));
+            exit(json_encode($json, JSON_UNESCAPED_UNICODE));
         }
         return FALSE;
     }
     
     public function download($url, $path = 'image/', $fileName = '', $headers = [ 'Referer' => 'https://app-api.pixiv.net/' ]){
-        
         try{
             $path = iconv('utf-8', 'gbk', $path);
             if(empty($fileName)){
@@ -194,7 +208,8 @@ class Api {
                 return 1;
             }
             $response = $this->client->get($url, ['headers'=> $headers,'save_to'=> $saveFilePath]);
-            if($response->getReasonPhrase() == 'OK'){
+            $code = $response->getStatusCode();
+            if($code <=206){
                 return TRUE;
             }
             else
@@ -213,7 +228,7 @@ class Api {
             return FALSE;
         }
         if(!is_dir($savePath)){
-            return FALSE;
+            mkdir($savePath, 0777);
         }
         $zip = new \ZipArchive();
         if($zip->open($filePath )=== TRUE){ 
@@ -225,6 +240,7 @@ class Api {
         }
     }
     
+<<<<<<< HEAD
 <<<<<<< Updated upstream
     public function create_gif($frames, $delay, $filePath){
         try{
@@ -237,6 +253,12 @@ class Api {
         try{
             $gc = new GifCreator();
             $gifBinary = $gc->create($frames, $delay);
+=======
+    public function create_gif($frames, $delay, $filePath=NULL){
+        try{
+            $gc = new GifCreator();
+            $gifBinary = $gc->create($frames, $delay);
+>>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
             if(!empty($filePath)){
                 file_put_contents($filePath, $gifBinary);
                 return TRUE;
@@ -244,12 +266,16 @@ class Api {
                 return $gifBinary;
             }
             
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
         } catch (\Exception $ex) {
             return FALSE;
         }
     }
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
     
 
@@ -257,6 +283,9 @@ class Api {
 =======
     public function guzzle_call($method, $url, $headers=[], $params=[], $data=[], $allow_redirects=True, $json=[], $timeout=10){
 >>>>>>> Stashed changes
+=======
+    public function guzzle_call($method, $url, $headers=[], $params=[], $data=[], $allow_redirects=True, $json=[], $timeout=10){
+>>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
         $client = $this->client;
         if($method == 'GET')
         {
@@ -325,8 +354,8 @@ class Api {
         return true;
     }
 	
-	# 读取文件
-    private function ReadFile($file)
+    # 读取文件
+    public function ReadFile($file)
     {
         try{
             $myfile = fopen($file, "r");
@@ -338,8 +367,8 @@ class Api {
         }
     }
     
-	# 写入文件
-    private function WriteFile($file, $centent, $type="w")
+    # 写入文件
+    public function WriteFile($file, $centent, $type="w")
     {
         try{
             $File = fopen($file, $type);

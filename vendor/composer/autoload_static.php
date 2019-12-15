@@ -14,9 +14,17 @@ class ComposerStaticInit5fa71ed3c2df4cbe48c9ec375a802453
     );
 
     public static $prefixLengthsPsr4 = array (
+        'v' => 
+        array (
+            'voku\\helper\\' => 12,
+        ),
         'p' => 
         array (
             'pixiv\\' => 6,
+        ),
+        'S' => 
+        array (
+            'Symfony\\Component\\CssSelector\\' => 30,
         ),
         'P' => 
         array (
@@ -31,9 +39,17 @@ class ComposerStaticInit5fa71ed3c2df4cbe48c9ec375a802453
     );
 
     public static $prefixDirsPsr4 = array (
+        'voku\\helper\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/voku/simple_html_dom/src/voku/helper',
+        ),
         'pixiv\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+        'Symfony\\Component\\CssSelector\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/css-selector',
         ),
         'Psr\\Http\\Message\\' => 
         array (
