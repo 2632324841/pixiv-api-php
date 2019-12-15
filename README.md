@@ -12,32 +12,68 @@ use pixiv\Aapi;
 use pixiv\Papi;
 use pixiv\Ajax;
 
+
 //$ajax = new Ajax();
 //$cookie = '';
 //$ajax->set_init($cookie);
 //# yyyyMMdd
-////$ajax->ranking('20190912');
-////$ajax->popular_illust();
+//$ajax->ranking('20190912');
+//$ajax->popular_illust();
 //# $wlt 最小宽度 $wgt 最大宽度
 //$ajax->search_illusts('碧蓝航线', 1, 'safe', 's_tag', $p=1, $order=null, $ratio=0.5, $wlt=1920, $wgt=null, $hlt=1080, $hgt=null);
 //echo $re;
+//$ajax->search_illusts_pc('プリンツ・オイゲン(アズールレーン)');
+//print_r($ajax->json);
 
 
+//$Aapi = new Aapi();
 
-$Aapi = new Aapi();
 //$Papi = new Papi();
+
+$ajax = new Ajax();
+//设置 页面上的cookie
+$cookie = '';
+//设置cookie
+$ajax->set_init($cookie);
+//# yyyyMMdd
+//$ajax->ranking('20190912');
+//$ajax->popular_illust();
+//# $wlt 最小宽度 $wgt 最大宽度
+// $ajax->search_illusts('碧蓝航线', 1, 'safe', 's_tag', $p=1, $order=null, $ratio=0.5, $wlt=1920, $wgt=null, $hlt=1080, $hgt=null);
+$ajax->all_activity();
+$ajax->return_json();
+//$ajax->search_illusts_pc('プリンツ・オイゲン(アズールレーン)');
+//print_r($ajax->json);
+
+
+//$Aapi = new Aapi();
+
 //$username = '';
 //$password = '';
+//$Aapi->request_type = 1;
 //$Aapi->login($username, $password);
 //$Aapi->user_illusts('40291400');
-//ecoh $Aapi->StatusCode;
 //print_r($Aapi->json);
 
+
+//echo $Aapi->StatusCode;
+
 //下载动图
-$Aapi->ugoira_meta_save(72729032);
+//$Aapi->ugoira_meta_save(72729032);
+//
+//$username = '';
+//$password = '';
+//$Aapi->request_type = 1;
+//$Aapi->login($username, $password);
+//$Aapi->user_illusts('40291400');
+//print_r($Aapi->json);
+//echo $Aapi->StatusCode;
+//下载动图
+//$Aapi->ugoira_meta_save(72729032);
 
-
+//$Papi = new Papi();
 //$Papi->login($username, $password);
+//$Papi->request_type=1;
 //$Papi->works(76788220);
 //echo 'StatusCode:'.$Papi->StatusCode;
 //print_r($Papi->json);
