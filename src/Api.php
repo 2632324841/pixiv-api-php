@@ -26,33 +26,16 @@ class Api {
     protected $user_id = 0;
     protected $save_time = 3600;
     protected $client;
-<<<<<<< HEAD
-<<<<<<< Updated upstream
+
     protected $token_path = './';
-    public function __construct() {
-        $jar = new \GuzzleHttp\Cookie\CookieJar();
-        $this->client = new GuzzleHttp\Client(['verify' => false,'cookies' => $jar,'http_errors' => false]);
-=======
-    protected $token_path;
     protected $lang;
     protected $parse_url;
-    
     //public $hosts = 'https://app-api.pixiv.net';
     public $request_type;
     
     public function __construct($username='',$password='', $request_type=0, $lang='zh-cn', $token_path='./') {
         $jar = new \GuzzleHttp\Cookie\CookieJar();
-=======
-    protected $token_path;
-    protected $lang;
-    protected $parse_url;
-    
-    //public $hosts = 'https://app-api.pixiv.net';
-    public $request_type;
-    
-    public function __construct($username='',$password='', $request_type=0, $lang='zh-cn', $token_path='./') {
-        $jar = new \GuzzleHttp\Cookie\CookieJar();
->>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
+
         $this->client = new GuzzleHttp\Client(['verify' => FALSE, 'cookies' => $jar, 'http_errors' => FALSE, 'allow_redirects'=>TRUE]);
         $this->token_path = $token_path;
         $this->lang = $lang;
@@ -63,10 +46,8 @@ class Api {
         if(!empty($username) && !empty($password)){
             $this->auth($username, $password);
         }
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
+
+
     }
     
     public function auth($username=NULL, $password=NULL, $refresh_token=NULL){
@@ -239,26 +220,12 @@ class Api {
             FALSE;
         }
     }
-    
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-    public function create_gif($frames, $delay, $filePath){
-        try{
-            $gc = new GifCreator();
-            $gifBinary = $gc->create($frames, $delay);
-            file_put_contents($filePath, $gifBinary);
-            return TRUE;
-=======
+
     public function create_gif($frames, $delay, $filePath=NULL){
         try{
             $gc = new GifCreator();
             $gifBinary = $gc->create($frames, $delay);
-=======
-    public function create_gif($frames, $delay, $filePath=NULL){
-        try{
-            $gc = new GifCreator();
-            $gifBinary = $gc->create($frames, $delay);
->>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
+
             if(!empty($filePath)){
                 file_put_contents($filePath, $gifBinary);
                 return TRUE;
@@ -266,26 +233,13 @@ class Api {
                 return $gifBinary;
             }
             
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
         } catch (\Exception $ex) {
             return FALSE;
         }
     }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-    
+    public function guzzle_call($method, $url, $headers=[], $params=[], $data=[], $allow_redirects=True, $json=[], $timeout=10){
 
-    public function guzzle_call($method, $url, $headers=[], $params=[], $data=[], $json=[], $timeout=10){
-=======
-    public function guzzle_call($method, $url, $headers=[], $params=[], $data=[], $allow_redirects=True, $json=[], $timeout=10){
->>>>>>> Stashed changes
-=======
-    public function guzzle_call($method, $url, $headers=[], $params=[], $data=[], $allow_redirects=True, $json=[], $timeout=10){
->>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
         $client = $this->client;
         if($method == 'GET')
         {
