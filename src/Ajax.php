@@ -64,13 +64,11 @@ class Ajax extends Api{
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[], $data=[]);
         # 处理返回的Json数据
         $html = (string)$r->getBody();
-<<<<<<< HEAD
-<<<<<<< Updated upstream
+
         $temp = substr($html, strpos($html, 'init-config',1) + 41 , strpos($html, '<script') - (strpos($html, 'init-config',1) + 43));
         $json = json_decode($temp, true);
         # 设置配置数据
         $this->init_config = $json;
-=======
         $HtmlDom = new HtmlDomParser();
         $HtmlDom->load($html);
         $json = $HtmlDom->find('#init-config',0)->content;
@@ -83,8 +81,6 @@ class Ajax extends Api{
         $this->headers['x-csrf-token'] = $json['pixiv.context.postKey'];
         $this->headers['x-user-id'] = $json['pixiv.user.id'];
         return 1;
->>>>>>> Stashed changes
-=======
         $HtmlDom = new HtmlDomParser();
         $HtmlDom->load($html);
         $json = $HtmlDom->find('#init-config',0)->content;
@@ -97,7 +93,6 @@ class Ajax extends Api{
         $this->headers['x-csrf-token'] = $json['pixiv.context.postKey'];
         $this->headers['x-user-id'] = $json['pixiv.user.id'];
         return 1;
->>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
     }
     
     public function ajax_guzzle_call($method, $url, $headers=[], $params=[], $data=[]){
@@ -136,7 +131,7 @@ class Ajax extends Api{
     
     
     public function return_json($data = [], $code = 200){
-        if(empty($data)){
+        if(count($data) == 0){
             $this->json($this->json, $code);
         }else{
             $this->json($data, $code);
@@ -203,12 +198,28 @@ class Ajax extends Api{
         }
     }
     
-<<<<<<< HEAD
-<<<<<<< Updated upstream
+
+    /*
+     * date 20190926
+     * mode ranking
+     * mode_rank daily 天 weekly 周 monthly 月 rookie 新人 original 原创 male 受男性欢迎 female 受女性欢迎 
+     * content_rank all 全部 illust 插图 ugoira 动图 manga 漫画 
+     */
     public function ranking($date=Null, $mode='ranking', $mode_rank='daily', $content_rank='all', $p=1){
-=======
-=======
->>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
+        $url = 'https://www.pixiv.net/touch/ajax_api/ajax_api.php';
+        $params = [
+            'mode'=> $mode,
+            'mode_rank'=> $mode_rank,
+            'content_rank'=> $content_rank,
+            'P'=> $p,
+        ];
+        if($date){
+            $params['date'] = $date;
+        }
+        $r = $this->guzzle_call('GET', $url, $this->headers, $params);
+        return $this->parse_result($r);
+    }
+    
     public function illust_details($illust_id, $ref=NULL, $lang='zh'){
         $url = 'https://www.pixiv.net/touch/ajax/illust/details';
         $params = [
@@ -255,31 +266,7 @@ class Ajax extends Api{
         return $this->parse_result($r);
     }
 
-    /*
-     * date 20190926
-     * mode ranking
-     * mode_rank daily 天 weekly 周 monthly 月 rookie 新人 original 原创 male 受男性欢迎 female 受女性欢迎 
-     * content_rank all 全部 illust 插图 ugoira 动图 manga 漫画 
-     */
-    public function ranking($date=Null, $mode='ranking', $mode_rank='daily', $content_rank='all', $p=1 ,$lang='zh'){
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
-        $url = 'https://www.pixiv.net/touch/ajax_api/ajax_api.php';
-        $params = [
-            'mode'=> $mode,
-            'mode_rank'=> $mode_rank,
-            'content_rank'=> $content_rank,
-            'P'=> $p,
-            'lang'=> $lang
-        ];
-        if($date){
-            $params['date'] = $date;
-        }
-        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
-        return $this->parse_result($r);
-    }
+    
     
     public function popular_illust($type=null, $p=1, $mode='popular_illust', $lang='zh'){
         $url = 'https://www.pixiv.net/touch/ajax_api/ajax_api.php';
@@ -360,8 +347,6 @@ class Ajax extends Api{
             'p'=> $this->params($data, 'p', 1),
             'lang'=> $this->params($data, 'lang', 'zh'),
         ];
-<<<<<<< HEAD
-<<<<<<< Updated upstream
         if($order){
             $params['order'] = $order;
         }
@@ -370,17 +355,19 @@ class Ajax extends Api{
     }
     
     public function bookmark_new_illust($type='illusts', $include_meta=1 , $tag=null, $p=1){
-=======
-        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+        $url = 'https://www.pixiv.net/touch/ajax/follow/latest';
+        $params = [
+            'type'=> $type,
+            'include_meta'=> $include_meta,
+            'p'=> $p,
+        ];
+        if($tag){
+            $params['tag'] = $tag;
+        }
+        $r = $this->guzzle_call('GET', $url, $this->headers, $params);
         return $this->parse_result($r);
     }
     
-=======
-        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
-        return $this->parse_result($r);
-    }
-    
->>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
     # $mode='safe', $s_mode='s_tag', $p=1, $order=null, $ratio=null, $wlt=null, $wgt=null, $hlt=null, $hgt=null, $scd=null, $ecd=null, $blt=null, $bgt=null, $tool=null
     /*
      * s_mode = ['s_tag_full','s_tc','s_tag',null]; 标签完全一致 标题说明文字  标签
@@ -498,25 +485,6 @@ class Ajax extends Api{
             return $data;
         }
     }*/
-
-    public function bookmark_new_illust($type='illusts', $include_meta=1 , $tag=null, $p=1, $lang='zh'){
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
-        $url = 'https://www.pixiv.net/touch/ajax/follow/latest';
-        $params = [
-            'type'=> $type,
-            'include_meta'=> $include_meta,
-            'p'=> $p,
-            'lang'=> $lang
-        ];
-        if($tag){
-            $params['tag'] = $tag;
-        }
-        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
-        return $this->parse_result($r);
-    }
     
     public function bookmark_illust($user_id, $type='illust', $tag=null, $p=1, $lang='zh'){
         $url = 'https://www.pixiv.net/touch/ajax/user/bookmarks';
@@ -592,11 +560,9 @@ class Ajax extends Api{
             'tt'=> $this->init_config['pixiv.context.postKey'],
         ];
         $r = $this->ajax_guzzle_call('POST', $url, $this->headers, $params=[], $data);
-<<<<<<< HEAD
+
         return $this->parse_result($r);
     }
-<<<<<<< Updated upstream
-=======
     
     public function tags(){
         $url = 'https://www.pixiv.net/tags.php';
@@ -622,12 +588,12 @@ class Ajax extends Api{
     //动态 具体去P站页面看用法 https://www.pixiv.net/stacc/?mode=unify
     public function all_activity(){
        $unify_config = $this->unify_config();
-       $url = 'https://www.pixiv.net/stacc/my/home/all/touch_nottext/'.$unify_config['pixiv.context.nextId'].'/js';
+       $url = 'https://www.pixiv.net/stacc/my/home/all/touch_nottext/'.$unify_config['pixiv.context.nextId'].'/js/';
        //pixiv.context.nextId
        $params = [
             'tt'=> $this->init_config['pixiv.context.postKey'],
         ];
-        $r = $this->ajax_guzzle_call('POST', $url, $this->headers, $params);
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
         return $this->parse_result($r);
     }
     
@@ -659,30 +625,4 @@ class Ajax extends Api{
         $this->WriteFile($init_file, json_encode($this->unify_config, JSON_UNESCAPED_UNICODE));
         return $this->unify_config;
     }
->>>>>>> Stashed changes
-=======
-        return $this->parse_result($r);
-    }
-    
-    public function tags(){
-        $url = 'https://www.pixiv.net/tags.php';
-        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[]);
-        $html = (string)$r->getBody();
-        $HtmlDom = new HtmlDomParser();
-        $HtmlDom->load($html);
-        $tag_list = $HtmlDom->find('.tags-list',0);
-        $tags = [];
-        foreach ($tag_list as $key=>$val){
-            $tags[$key]['tag'] = $val->find('.tag',0)->plaintext;
-            $tags[$key]['count'] = $val->find('.count',0)->plaintext;
-        }
-        $this->StatusCode = $r->getStatusCode();
-        $this->Headers = $r->getHeaders();
-        $this->ReasonPhrase = $r->getReasonPhrase();
-        $this->body = $r->getBody();
-        $this->getContents = (string)$r->getBody();
-        $this->json = $tags;
-        return $this;
-    }
->>>>>>> 9206acc217e47b48a8f807405ed66b3c3022c44d
 }
