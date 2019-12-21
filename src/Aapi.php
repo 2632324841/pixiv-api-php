@@ -1099,10 +1099,14 @@ class Aapi extends Api{
         if($this->request_type == 1){
             $parse_url = parse_url($url);
             $host = $parse_url['host'];
-            $json_data = $this->require_appapi_hosts($host);
-            $hosts = $json_data['Answer'][0]['data'];
-            $headers['Host'] = $host;
-            $url = str_replace($host, $hosts, $url);
+            if(!filter_var($host, FILTER_VALIDATE_IP)){
+                //$json_data = $this->require_appapi_hosts($host);
+                //$hosts = $json_data['Answer'][0]['data'];
+                $hosts = $this->require_appapi_hosts($host);
+                $headers['Host'] = $host;
+                $url = str_replace($host, $hosts, $url);
+            }
+            
         }
         if(array_key_exists('User-Agent',$headers) == FALSE || array_key_exists('user-agent',$headers) == FALSE){
             # Set User-Agent if not provided

@@ -28,8 +28,9 @@ class Papi extends Api{
         if($this->request_type == 1){
             $parse_url = parse_url($url);
             $host = $parse_url['host'];
-            $json_data = $this->require_appapi_hosts($host);
-            $hosts = $json_data['Answer'][0]['data'];
+            //$json_data = $this->require_appapi_hosts($host);
+            //$hosts = $json_data['Answer'][0]['data'];
+            $hosts = $this->require_appapi_hosts($host);
             $headers['Host'] = $host;
             $url = str_replace($host, $hosts, $url);
         }

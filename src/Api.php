@@ -32,7 +32,9 @@ class Api {
     protected $parse_url;
     //public $hosts = 'https://app-api.pixiv.net';
     public $request_type;
-    
+    public $request_path = './';
+
+
     public function __construct($username='',$password='', $request_type=0, $lang='zh-cn', $token_path='./') {
         $jar = new \GuzzleHttp\Cookie\CookieJar();
 
@@ -40,9 +42,11 @@ class Api {
         $this->token_path = $token_path;
         $this->lang = $lang;
         $this->request_type = $request_type;
-        if($this->request_type == 1){
-            $this->hosts = 'https://'.$this->require_appapi_hosts('oauth.secure.pixiv.net');
-        }
+        /*if($this->request_type == 1){
+            $ip = $this->require_appapi_hosts('oauth.secure.pixiv.net');
+            //$ip = $json['Answer'][1]['data'];
+            //$this->hosts = 'https://'.$ip;
+        }*/
         if(!empty($username) && !empty($password)){
             $this->auth($username, $password);
         }
@@ -91,8 +95,9 @@ class Api {
         if($this->request_type == 1){
             $parse_url = parse_url($url);
             $host = $parse_url['host'];
-            $json_data = $this->require_appapi_hosts($host);
-            $hosts = $json_data['Answer'][0]['data'];
+            //$json_data = $this->require_appapi_hosts($host);
+            //$hosts = $json_data['Answer'][0]['data'];
+            $hosts = $this->require_appapi_hosts($host);
             $headers['Host'] = $host;
             $url = str_replace($host, $hosts, $url);
         }
@@ -142,10 +147,33 @@ class Api {
     }
     
     public function require_appapi_hosts($hostname='app-api.pixiv.net'){
+        $fileName = $this->request_path.'hosts.json';
+        if(is_file($fileName)){
+            $json = $this->ReadFile($fileName);
+            $data = json_decode($json, TRUE);
+            //如果存在
+            if(array_key_exists($hostname, $data)){
+                $min = 0;
+                $max = count($data[$hostname])-1;
+                if($max > 0){
+                    return $data[$hostname][mt_rand($min, $max)]['data'];
+                }else{
+                    return $data[$hostname][0]['data'];
+                }
+            }
+        }
         $url = "https://1.0.0.1/dns-query?ct=application/dns-json&name=$hostname&type=A&do=false&cd=false";
         $r = $this->guzzle_call('GET', $url);
         $json = json_decode($r->getBody(), TRUE);
-        return $json;
+        $data[$hostname] = $json['Answer'];
+        $this->WriteFile($fileName, json_encode($data, JSON_UNESCAPED_UNICODE));
+        $min = 0;
+        $max = count($json['Answer'])-1;
+        if($max > 0){
+            return $json['Answer'][mt_rand($min, $max)]['data'];
+        }else{
+            return $json['Answer'][0]['data'];
+        }
     }
     
     public function set_auth($access_token,$refresh_token=NULL){

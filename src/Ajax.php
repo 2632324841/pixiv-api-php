@@ -96,14 +96,15 @@ class Ajax extends Api{
     }
     
     public function ajax_guzzle_call($method, $url, $headers=[], $params=[], $data=[]){
-        /*if($this->request_type == 1){
+        if($this->request_type == 1){
             $parse_url = parse_url($url);
             $host = $parse_url['host'];
-            $json_data = $this->require_appapi_hosts($host);
-            $hosts = $json_data['Answer'][3]['data'];
+            //$json_data = $this->require_appapi_hosts($host);
+            //$hosts = $json_data['Answer'][3]['data'];
+            $hosts = $this->require_appapi_hosts($host);
             $headers['Host'] = $host;
             $url = str_replace($host, $hosts, $url);
-        }*/
+        }
         return $this->guzzle_call($method, $url, $headers, $params, $data, FALSE);
     }
     
