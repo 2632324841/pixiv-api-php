@@ -7,7 +7,7 @@
  */
 namespace pixiv;
 use pixiv\Api;
-use voku\helper\HtmlDomParser;
+use QL\QueryList;
 /**
  * Description of Ajax
  *
@@ -69,25 +69,12 @@ class Ajax extends Api{
         $json = json_decode($temp, true);
         # 设置配置数据
         $this->init_config = $json;
-        $HtmlDom = new HtmlDomParser();
-        $HtmlDom->load($html);
-        $json = $HtmlDom->find('#init-config',0)->content;
+        $HtmlDom = QueryList::html($html);
+        $json = $HtmlDom->find('#init-config')->content;
         //$temp = substr($html, strpos($html, 'init-config',1) + 41 , strpos($html, '<script') - (strpos($html, 'init-config',1) + 43));
         $json = json_decode($json, TRUE);
         $json['create_time'] = time();
         $this->WriteFile($init_file, json_encode($json, JSON_UNESCAPED_UNICODE));
-        # 设置配置数据
-        $this->init_config = $json;
-        $this->headers['x-csrf-token'] = $json['pixiv.context.postKey'];
-        $this->headers['x-user-id'] = $json['pixiv.user.id'];
-        return 1;
-        $HtmlDom = new HtmlDomParser();
-        $HtmlDom->load($html);
-        $json = $HtmlDom->find('#init-config',0)->content;
-        //$temp = substr($html, strpos($html, 'init-config',1) + 41 , strpos($html, '<script') - (strpos($html, 'init-config',1) + 43));
-        $json = json_decode($json, true);
-        $json['create_time'] = time();
-        $this->WriteFile($init_file, json_encode($json));
         # 设置配置数据
         $this->init_config = $json;
         $this->headers['x-csrf-token'] = $json['pixiv.context.postKey'];
@@ -385,9 +372,10 @@ class Ajax extends Api{
      * scd 开始时间
      * ecd 结尾时间
      * mode r18 xxx safe r15 普通
+     * P站已经更新 此方法弃用
      */
     public function search_illusts_pc($word, $data=[]){
-        $url = 'https://www.pixiv.net/search.php';
+        $url = "https://www.pixiv.net/tags/$word/artworks";
         $params = [
             'word'=> $word,
             'mode'=> $this->params($data, 'mode', 'safe'),
@@ -412,19 +400,19 @@ class Ajax extends Api{
         $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
         $r = $this->ajax_guzzle_call('GET', $url, $headers, $params);
         $html = (string)$r->getBody();
-        $HtmlDom = new HtmlDomParser();
-        $HtmlDom->load($html);
+        
+        $HtmlDom = QueryList::html($html);
         
         //转义json "
-        $data_items = $HtmlDom->find('#js-mount-point-search-result-list',0)->getAttribute('data-items');
+        $data_items = $HtmlDom->find('#js-mount-point-search-result-list')->attrs('data-items');
         $data_items = str_replace('&quot;', '"', $data_items);
         $data_items = json_decode($data_items,TRUE);
         
-        $data_related_tags = $HtmlDom->find('#js-mount-point-search-result-list',0)->getAttribute('data-related-tags');
+        $data_related_tags = $HtmlDom->find('#js-mount-point-search-result-list')->attrs('data-related-tags');
         $data_related_tags = str_replace('&quot;', '"', $data_related_tags);
         $data_related_tags = json_decode($data_related_tags,TRUE);
         
-        $data_tag = $HtmlDom->find('#js-mount-point-search-result-list',0)->getAttribute('data-tag');
+        $data_tag = $HtmlDom->find('#js-mount-point-search-result-list')->attrs('data-tag');
         $data_tag = str_replace('&quot;', '"', $data_tag);
         $data_tag = json_decode($data_tag,TRUE);
 
@@ -441,6 +429,84 @@ class Ajax extends Api{
         $this->json = $json;
         return $this;
     }
+    
+    # $mode='safe', $s_mode='s_tag', $p=1, $order=null, $ratio=null, $wlt=null, $wgt=null, $hlt=null, $hgt=null, $scd=null, $ecd=null, $blt=null, $bgt=null, $tool=null
+    /*
+     * s_mode = ['s_tag_full','s_tc','s_tag',null]; 标签完全一致 标题说明文字  标签
+     * type = ['illust','manga','ugoira',null]; 插图 漫画 动图
+     * order popular_d 受全站欢迎 popular_male_d 受男性欢迎 popular_female_d 受女性欢迎 date 按旧排序 date_d 按新排序
+     * wlt 最低宽度 px
+     * wgt 最大宽度 px
+     * hlt 最低高度 px
+     * hgt 最大高度 px
+     * ratio 0.5 横图 -0.5 纵图 0 正方形图 null 默认
+     * tool SAI Photoshop 等等制图工具
+     * blt 最小收藏数
+     * bgt 最大收藏数
+     * scd 开始时间
+     * ecd 结尾时间
+     * mode r18 xxx safe r15 普通
+     */
+    public function search_illusts_pc_v2($word, $data=[]){
+        $url = "https://www.pixiv.net/ajax/search/artworks/$word";
+        $params = [
+            'word'=> $word,
+            'mode'=> $this->params($data, 'mode', 'safe'),
+            's_mode'=> $this->params($data, 's_mode', 's_tag'),
+            'order'=> $this->params($data, 'order','date_d'),
+            'type'=> $this->params($data, 'type'),
+            'p'=> $this->params($data, 'p', 1),
+            'wlt'=> $this->params($data, 'wlt'),
+            'wgt'=> $this->params($data, 'wgt'),
+            'hlt'=> $this->params($data, 'hlt'),
+            'hgt'=> $this->params($data, 'hgt'),
+            'ratio'=> $this->params($data, 'ratio'),
+            'scd'=> $this->params($data, 'scd'),
+            'ecd'=> $this->params($data, 'ecd'),
+            'blt'=> $this->params($data, 'blt'),
+            'bgt'=> $this->params($data, 'bgt'),
+            'tool'=> $this->params($data, 'tool'),
+            'p'=> $this->params($data, 'p', 1),
+            'lang'=> $this->params($data, 'lang', 'zh'),
+        ];
+        $headers = $this->headers;
+        $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
+        $r = $this->ajax_guzzle_call('GET', $url, $headers, $params);
+        return $this->parse_result($r);
+    }
+    
+    //emmmm
+    public function artworks_tags($word){
+        $url = "https://www.pixiv.net/ajax/search/tags/$word";
+        $headers = $this->headers;
+        $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
+        $r = $this->ajax_guzzle_call('GET', $url, $headers, $params);
+        return $this->parse_result($r);
+    }
+
+
+    
+    //用户信息
+    public function user_information($user_id, $full = 1){
+        $url = "https://www.pixiv.net/ajax/user/$user_id";
+        $params = [
+            'full'=>$full,
+        ];
+        $headers = $this->headers;
+        $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
+        $r = $this->ajax_guzzle_call('GET', $url, $headers, $params);
+        return $this->parse_result($r);
+    }
+    
+    //用户最新作品
+    public function user_latest($user_id){
+        $url = "https://www.pixiv.net/ajax/user/$user_id/works/latest";
+        $headers = $this->headers;
+        $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
+        $r = $this->ajax_guzzle_call('GET', $url, $headers, $params);
+        return $this->parse_result($r);
+    }
+
     
     public function params($data, $key, $value=''){
         if(array_key_exists($key, $data)){
@@ -617,10 +683,9 @@ class Ajax extends Api{
         $api = 'https://www.pixiv.net/stacc/?mode=unify';
         $r = $this->ajax_guzzle_call('GET', $api, $this->headers, $params=[]);
         $html = (string)$r->getBody();
-        $HtmlDom = new HtmlDomParser();
-        $HtmlDom->load($html);
+        $HtmlDom = QueryList::html($html);
         //init-config-input
-        $init_config = $HtmlDom->find('#init-config-input',0)->value;
+        $init_config = $HtmlDom->find('#init-config-input')->value;
         $this->unify_config = json_decode($init_config, TRUE);
         $this->unify_config['create_time'] = time();
         $this->WriteFile($init_file, json_encode($this->unify_config, JSON_UNESCAPED_UNICODE));

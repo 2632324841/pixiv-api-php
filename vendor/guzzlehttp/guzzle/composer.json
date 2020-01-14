@@ -24,7 +24,7 @@
         "php": ">=5.5",
         "ext-json": "*",
         "guzzlehttp/promises": "^1.0",
-        "guzzlehttp/psr7": "^1.4"
+        "guzzlehttp/psr7": "^1.6.1"
     },
     "require-dev": {
         "ext-curl": "*",
@@ -32,14 +32,15 @@
         "psr/log": "^1.1"
     },
     "suggest": {
-        "psr/log": "Required for using the Log middleware"
+        "psr/log": "Required for using the Log middleware",
+        "ext-intl": "Required for Internationalized Domain Name (IDN) support"
     },
     "config": {
         "sort-packages": true
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "6.3-dev"
+            "dev-master": "6.5-dev"
         }
     },
     "autoload": {

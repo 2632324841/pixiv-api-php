@@ -33,7 +33,8 @@ $ajax->set_init($cookie);
 //$ajax->popular_illust();
 //# $wlt 最小宽度 $wgt 最大宽度
 // $ajax->search_illusts('碧蓝航线', 1, 'safe', 's_tag', $p=1, $order=null, $ratio=0.5, $wlt=1920, $wgt=null, $hlt=1080, $hgt=null);
-$ajax->all_activity();
+//$ajax->all_activity();
+$ajax->search_illusts_pc_v2('碧蓝航线');
 $ajax->return_json();
 //$ajax->search_illusts_pc('プリンツ・オイゲン(アズールレーン)');
 //print_r($ajax->json);
