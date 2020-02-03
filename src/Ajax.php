@@ -335,9 +335,6 @@ class Ajax extends Api{
             'p'=> $this->params($data, 'p', 1),
             'lang'=> $this->params($data, 'lang', 'zh'),
         ];
-        if($order){
-            $params['order'] = $order;
-        }
         $r = $this->guzzle_call('GET', $url, $this->headers, $params);
         return $this->parse_result($r);
     }
@@ -652,6 +649,35 @@ class Ajax extends Api{
         return $this;
     }
     
+    //搜索相关标签
+    public function search_correlation_tag($keyword){
+        $url = 'https://www.pixiv.net/rpc/cps.php';
+        $params = [
+            'keyword'=> $keyword,
+            'tt'=> $this->init_config['pixiv.context.postKey'],
+        ];
+        $this->headers['sec-fetch-mode'] = 'cors';
+        $this->headers['sec-fetch-site'] = 'same-origin';
+        $this->headers['referer'] = 'https://www.pixiv.net/tags/'.$keyword.'/artworks';
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+
+        return $this->parse_result($r);
+    }
+
+    //获取作品评论
+    public function illust_comments($illust_id, $offset=0, $limit=3){
+        $url = 'https://www.pixiv.net/ajax/illusts/comments/roots';
+        $params = [
+            'illust_id'=> $illust_id,
+            'offset'=>$offset,
+            'limit'=>$limit,
+            'tt'=> $this->init_config['pixiv.context.postKey'],
+        ];
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+
+        return $this->parse_result($r);
+    }
+
     //动态 具体去P站页面看用法 https://www.pixiv.net/stacc/?mode=unify
     public function all_activity(){
        $unify_config = $this->unify_config();
@@ -661,6 +687,91 @@ class Ajax extends Api{
             'tt'=> $this->init_config['pixiv.context.postKey'],
         ];
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+        return $this->parse_result($r);
+    }
+
+    public function illust_recommend_init($illust_id, $limit=18){
+        $url = 'https://www.pixiv.net/ajax/illust/'.$illust_id.'/recommend/init';
+        $params = [
+            'limit'=>$limit,
+            'tt'=> $this->init_config['pixiv.context.postKey'],
+        ];
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+
+        return $this->parse_result($r);
+    }
+
+    //用户信息顶部
+    public function user_profile_top($user_id){
+        $url = 'https://www.pixiv.net/ajax/user/'.$user_id.'/profile/top';
+        $params = [
+            'tt'=> $this->init_config['pixiv.context.postKey'],
+        ];
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+
+        return $this->parse_result($r);
+    }
+
+    //用户作品
+    public function user_profile_all($user_id){
+        $url = 'https://www.pixiv.net/ajax/user/'.$user_id.'/profile/all';
+        $params = [
+            'tt'=> $this->init_config['pixiv.context.postKey'],
+        ];
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+
+        return $this->parse_result($r);
+    }
+
+    //标签
+    public function tags_frequent_illust($illust_ids){
+        $url = 'https://www.pixiv.net/ajax/tags/frequent/illust';
+        $ids = '?';
+        if(is_numeric($illust_ids)){
+            $ids = $ids.'ids[] = '.$illusts_ids;
+        }else if(is_string($illust_ids)){
+            $ids = $ids.$illust_ids;
+        }else if(is_array($illust_ids)){
+            foreach($illusts_ids as $val){
+                $ids = $ids.'ids[] = '.$illusts_ids.'&';
+            }
+        }
+        $r = $this->ajax_guzzle_call('GET', $url.$ids, $this->headers, $params=[]);
+
+        return $this->parse_result($r);
+    }
+
+    //作品
+    public function user_profile_illusts($user_id, $illust_ids, $work_category='illustManga', $is_first_page=1){
+        $url = 'https://www.pixiv.net/ajax/user/'.$user_id.'/profile/illusts';
+        $ids = '?';
+        if(is_numeric($illust_ids)){
+            $ids = $ids.'ids[] = '.$illusts_ids.'&';
+        }else if(is_string($illust_ids)){
+            $ids = $ids.$illust_ids.'&';
+        }else if(is_array($illust_ids)){
+            foreach($illusts_ids as $val){
+                $ids = $ids.'ids[] = '.$illusts_ids.'&';
+            }
+        }
+        $ids = $ids.'work_category='.$work_category.'&';
+        $ids = $ids.'is_first_page='.$is_first_page.'&';
+        $r = $this->ajax_guzzle_call('GET', $url.$ids, $this->headers, $params=[]);
+
+        return $this->parse_result($r);
+    }
+
+    //用户作品
+    public function user_illusts_tag($user_id, $tag, $offset=0, $limit=48){
+        $url = 'https://www.pixiv.net/ajax/user/'.$user_id.'/illusts/tag';
+        $params = [
+            'tag'=>$tag,
+            'offset'=>$offset,
+            'limit'=>$limit,
+            'tt'=> $this->init_config['pixiv.context.postKey'],
+        ];
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+
         return $this->parse_result($r);
     }
     
@@ -691,4 +802,6 @@ class Ajax extends Api{
         $this->WriteFile($init_file, json_encode($this->unify_config, JSON_UNESCAPED_UNICODE));
         return $this->unify_config;
     }
+
+
 }
