@@ -50,8 +50,6 @@ class Api {
         if(!empty($username) && !empty($password)){
             $this->auth($username, $password);
         }
-
-
     }
     
     public function auth($username=NULL, $password=NULL, $refresh_token=NULL){
@@ -60,7 +58,7 @@ class Api {
             mkdir($this->token_path, 0777);
         }
         //保存token
-        $token_file = $this->token_path.$username.'.token';
+        $token_file = $this->token_path.'/'.$username.'.token';
         //判断token是否存在
         if(is_file($token_file)){
             $json = $this->ReadFile($token_file);

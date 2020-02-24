@@ -27,10 +27,9 @@ class Aapi extends Api{
     public function ugoira_meta($illust_id){
         $url = "https://www.pixiv.net/ajax/illust/$illust_id/ugoira_meta";
         if($this->request_type == 1){
-//            $headers['Host'] = 'www.pixiv.net';
-//            $host = $this->require_appapi_hosts('www.pixiv.net');
-//            $url = str_replace('www.pixiv.net', $host, $url);
-            exit('request_type=1');
+           $headers['Host'] = 'www.pixiv.net';
+           $host = $this->require_appapi_hosts('www.pixiv.net');
+           $url = str_replace('www.pixiv.net', $host, $url);
         }
         $r = $this->guzzle_call('GET', $url, $headers);
         return $this->parse_result($r);
@@ -752,7 +751,7 @@ class Aapi extends Api{
             'illust_id'=> $illust_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_guzzle_call('POST', $url, $headers = [], $params, $data, $req_auth);
+        $r = $this->no_auth_guzzle_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
         return $this->parse_result($r);
     }
     
@@ -1143,12 +1142,25 @@ class Aapi extends Api{
         return $params;
     }
 
+    # 翻页参数转换
+    public function params_page($page){
+        if($page > 0){
+            $offset = $page * 30 - 30;
+        }else{
+            $offset = 0;
+        }
+        return $offset;
+    }
+
     # 翻页
-    public function next_page($next_url, $req_auth=True){
+    public function next_page($next_url, $page=Null,$req_auth=True){
         if($next_url == null){
             return null;
         }
         $params = $this->parse_qs($next_url);
+        if(is_int($page) && $page > 0){
+            $params['offset'] = $page * 30 - 30;
+        }
         $r = $this->no_auth_guzzle_call('GET', $next_url, $headers = [], $params, $req_auth);
         return $this->parse_result($r);
     }
