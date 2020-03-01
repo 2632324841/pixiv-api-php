@@ -193,10 +193,32 @@ class Ajax extends Api{
      * mode_rank daily 天 weekly 周 monthly 月 rookie 新人 original 原创 male 受男性欢迎 female 受女性欢迎 
      * content_rank all 全部 illust 插图 ugoira 动图 manga 漫画 
      */
-    public function ranking($date=Null, $mode='ranking', $mode_rank='daily', $content_rank='all', $p=1){
-        $url = 'https://www.pixiv.net/touch/ajax_api/ajax_api.php';
+    public function ranking($date=Null, $mode='daily', $p=1){
+        //$url = 'https://www.pixiv.net/ranking.php?date='.$date.'&mode='.$mode.'&format=json&p='.$p;
+        $url = 'https://www.pixiv.net/ranking.php?format=json';
         $params = [
             'mode'=> $mode,
+            'p'=> $p,
+        ];
+        $this->header['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
+        if($date){
+            $params['date'] = $date;
+        }
+        $r = $this->guzzle_call('GET', $url, $this->headers, $params=[]);
+        return $this->parse_result($r);
+    }
+    
+
+    /*
+     * date 20190926
+     * mode ranking
+     * mode_rank daily 天 weekly 周 monthly 月 rookie 新人 original 原创 male 受男性欢迎 female 受女性欢迎 
+     * content_rank all 全部 illust 插图 ugoira 动图 manga 漫画 
+     */
+    public function ranking_ajax($date=Null, $mode_rank='daily', $content_rank='all', $p=1){
+        $url = 'https://www.pixiv.net/touch/ajax_api/ajax_api.php';
+        $params = [
+            'mode'=> 'ranking',
             'mode_rank'=> $mode_rank,
             'content_rank'=> $content_rank,
             'p'=> $p,
@@ -207,7 +229,7 @@ class Ajax extends Api{
         $r = $this->guzzle_call('GET', $url, $this->headers, $params);
         return $this->parse_result($r);
     }
-    
+
     public function illust_details($illust_id, $ref=NULL, $lang='zh'){
         $url = 'https://www.pixiv.net/touch/ajax/illust/details';
         $params = [
