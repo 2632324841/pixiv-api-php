@@ -205,10 +205,28 @@ class Ajax extends Api{
         if($date){
             $params['date'] = $date;
         }
-        $r = $this->guzzle_call('GET', $url, $this->headers, $params=[]);
+        $r = $this->guzzle_call('GET', $url, $this->headers, $params);
         return $this->parse_result($r);
     }
     
+    /*
+     * date 20190926
+     * mode ranking
+     * mode daily 天 weekly 周 monthly 月 rookie 新人 original 原创 male 受男性欢迎 female 受女性欢迎 
+     * content_rank all 全部 illust 插图 ugoira 动图 manga 漫画 
+     */
+    public function new_ranking($mode='daily', $type='all', $p=1, $lang='zh'){
+        $url = 'https://www.pixiv.net/touch/ajax/ranking/illust';
+        $params = [
+            'mode'=> $mode,
+            'type'=> $type,
+            'page'=> $p,
+            'lang'=> $lang,
+        ];
+        $this->header['user-agent'] = 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1';
+        $r = $this->guzzle_call('GET', $url, $this->headers, $params);
+        return $this->parse_result($r);
+    }
 
     /*
      * date 20190926
@@ -544,7 +562,7 @@ class Ajax extends Api{
         return $this->parse_result($r);
     }
 
-    public function user_information($user_id, $full = 1){
+    public function user_information($user_id, $full = 1, $lang = 'zh'){
         $url = "https://www.pixiv.net/ajax/user/$user_id";
         $params = [
             'full'=>$full,
@@ -590,7 +608,7 @@ class Ajax extends Api{
 
     
     public function params($data, $key, $value=''){
-        if(array_key_exists($key, $data)){
+        if(is_array($data) && array_key_exists($key, $data)){
             return $data[$key];
         }else{
             return $value;
@@ -688,9 +706,12 @@ class Ajax extends Api{
         return $this->parse_result($r);
     }
     
-    public function user_status(){
+    public function user_status($lang = 'zh'){
         $url = 'https://www.pixiv.net/touch/ajax/user/self/status';
-        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[]);
+        $params = [
+            'lang'=> $lang,
+        ];
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=$params);
         return $this->parse_result($r);
     }
     
@@ -917,6 +938,20 @@ class Ajax extends Api{
             'limit'=>$limit,
             'type'=>$type,
             'r18'=>$r18,
+        ];
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+
+        return $this->parse_result($r);
+    }
+
+
+    //浏览历史 novel illust
+    public function user_history($type = 'illust', $offset=0){
+        $url = 'https://www.pixiv.net/ajax/history';
+        $this->headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
+        $params = [
+            'type'=>'illust',
+            'offset'=>$offset,
         ];
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
 
