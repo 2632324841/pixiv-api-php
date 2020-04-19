@@ -17,19 +17,36 @@ use GifCreator\GifCreator;
  * @author JC
  */
 class Api {
-    protected $client_id = 'KzEZED7aC0vird8jWyHM38mXjNTY';
-    protected $client_secret = 'W9JZoJe00qPvJsiyCGT3CCtC6ZUtdpKpzMbNlUGP';
+    protected $client_id = 'MOBrBDS8blbauoSck0ZfDbtuzpyT';
+    protected $client_secret = 'lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj';
     protected $hash_secret = '28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c';
+    protected $device_token = '416eeaafe17577e471b35d2cee7cdfdc';
     protected $access_token;
     protected $refresh_token;
     protected $user_id = 0;
     protected $save_time = 3600;
     protected $client;
-    protected $token_path;
-    public function __construct($username='',$password='', $token_path='./') {
+
+    protected $token_path = './';
+    protected $lang;
+    protected $parse_url;
+    //public $hosts = 'https://app-api.pixiv.net';
+    public $request_type;
+    public $request_path = './';
+
+
+    public function __construct($username='',$password='', $request_type=0, $lang='zh-cn', $token_path='./') {
         $jar = new \GuzzleHttp\Cookie\CookieJar();
-        $this->client = new GuzzleHttp\Client(['verify' => false,'cookies' => $jar,'http_errors' => false]);
+
+        $this->client = new GuzzleHttp\Client(['verify' => FALSE, 'cookies' => $jar, 'http_errors' => FALSE, 'allow_redirects'=>TRUE]);
         $this->token_path = $token_path;
+        $this->lang = $lang;
+        $this->request_type = $request_type;
+        /*if($this->request_type == 1){
+            $ip = $this->require_appapi_hosts('oauth.secure.pixiv.net');
+            //$ip = $json['Answer'][1]['data'];
+            //$this->hosts = 'https://'.$ip;
+        }*/
         if(!empty($username) && !empty($password)){
             $this->auth($username, $password);
         }
@@ -41,7 +58,7 @@ class Api {
             mkdir($this->token_path, 0777);
         }
         //保存token
-        $token_file = $this->token_path.$username.'.token';
+        $token_file = $this->token_path.'/'.$username.'.token';
         //判断token是否存在
         if(is_file($token_file)){
             $json = $this->ReadFile($token_file);
@@ -57,23 +74,31 @@ class Api {
                 return 1;
             }
         }
-        //获取token
-        $url = 'https://oauth.secure.pixiv.net/auth/token';
+         //获取token
+        $time = gmdate('Y-m-dTH:i:s+00:00');
+        $time = str_replace('GM', '', $time);
         $headers = [
-            'App-OS'=> 'ios',
-            'Accept-Language'=> 'en-us',
-            'App-OS-Version'=> '12.0.1',
-            'App-Version'=> '7.6.2',
-            'User-Agent'=> 'PixivIOSApp/7.6.2 (iOS 12.0.1; iPhone8,2)',
-            'X-Client-Time'=> time(),
-            'X-Client-Hash'=> md5(time().$this->hash_secret),
+            'Accept-Language'=> $this->lang,
+            'User-Agent'=> 'PixivAndroidApp/5.0.64 (Android 6.0)',
+            'X-Client-Time'=> $time,
+            'X-Client-Hash'=> md5($time.$this->hash_secret),
         ];
+        $url = "https://oauth.secure.pixiv.net/auth/token";
         $data = [
             'get_secure_url'=>1,
-            'include_policy'=>1,
+            //'include_policy'=>1,
             'client_id'=> $this->client_id,
             'client_secret'=> $this->client_secret,
         ];
+        if($this->request_type == 1){
+            $parse_url = parse_url($url);
+            $host = $parse_url['host'];
+            //$json_data = $this->require_appapi_hosts($host);
+            //$hosts = $json_data['Answer'][0]['data'];
+            $hosts = $this->require_appapi_hosts($host);
+            $headers['Host'] = $host;
+            $url = str_replace($host, $hosts, $url);
+        }
         if($username != NULL && $password != NULL)
         {
             $data['grant_type'] = 'password';
@@ -98,7 +123,7 @@ class Api {
         }
         try {
             $response = $this->guzzle_call('POST', $url, $headers, $params=[], $data);
-        
+            
             if($response->getStatusCode() == 200)
             {
                 $json = json_decode((string)$response->getBody(),true);
@@ -110,11 +135,42 @@ class Api {
                 return 1;
             }
             $re = json_decode((string)$response->getBody(),TRUE);
+            exit((string)$response->getBody());
             if($re['has_error']){
-                exit($re['errors']['system']['message']);
+                exit('Error：'.$re['errors']['system']['message']);
             }
         } catch (RequestException $e) {
             exit($e->getMessage());
+        }
+    }
+    
+    public function require_appapi_hosts($hostname='app-api.pixiv.net'){
+        $fileName = $this->request_path.'hosts.json';
+        if(is_file($fileName)){
+            $json = $this->ReadFile($fileName);
+            $data = json_decode($json, TRUE);
+            //如果存在
+            if(array_key_exists($hostname, $data)){
+                $min = 0;
+                $max = count($data[$hostname])-1;
+                if($max > 0){
+                    return $data[$hostname][mt_rand($min, $max)]['data'];
+                }else{
+                    return $data[$hostname][0]['data'];
+                }
+            }
+        }
+        $url = "https://1.0.0.1/dns-query?ct=application/dns-json&name=$hostname&type=A&do=false&cd=false";
+        $r = $this->guzzle_call('GET', $url);
+        $json = json_decode($r->getBody(), TRUE);
+        $data[$hostname] = $json['Answer'];
+        $this->WriteFile($fileName, json_encode($data, JSON_UNESCAPED_UNICODE));
+        $min = 0;
+        $max = count($json['Answer'])-1;
+        if($max > 0){
+            return $json['Answer'][mt_rand($min, $max)]['data'];
+        }else{
+            return $json['Answer'][0]['data'];
         }
     }
     
@@ -129,8 +185,8 @@ class Api {
     }
 
     
-    public function login($username,$password){
-        return $this->auth($username,$password);
+    public function login($username, $password){
+        return $this->auth($username, $password);
     }
     
     public function json($json, $code = 200){
@@ -190,11 +246,12 @@ class Api {
             FALSE;
         }
     }
-    
+
     public function create_gif($frames, $delay, $filePath=NULL){
-        //try{
+        try{
             $gc = new GifCreator();
             $gifBinary = $gc->create($frames, $delay);
+
             if(!empty($filePath)){
                 file_put_contents($filePath, $gifBinary);
                 return TRUE;
@@ -202,12 +259,13 @@ class Api {
                 return $gifBinary;
             }
             
-        /*} catch (\Exception $ex) {
+        } catch (\Exception $ex) {
             return FALSE;
-        }*/
+        }
     }
 
-    public function guzzle_call($method, $url, $headers=[], $params=[], $data=[], $json=[], $timeout=10){
+    public function guzzle_call($method, $url, $headers=[], $params=[], $data=[], $allow_redirects=True, $json=[], $timeout=10){
+
         $client = $this->client;
         if($method == 'GET')
         {
@@ -215,6 +273,7 @@ class Api {
                 'query' => $params,
                 'timeout'=>$timeout,
                 'headers'=>$headers,
+                'allow_redirects'=>$allow_redirects,
             ];
             if(!$params){
                 unset($options['query']);
@@ -227,6 +286,7 @@ class Api {
                 'form_params' => $data,
                 'timeout'=>$timeout,
                 'headers'=>$headers,
+                'allow_redirects'=>$allow_redirects,
             ];
             if(!$params){
                 unset($options['query']);
@@ -240,6 +300,7 @@ class Api {
                 'json' => $json,
                 'timeout'=>$timeout,
                 'headers'=>$headers,
+                'allow_redirects'=>$allow_redirects,
             ];
             if(!$params){
                 unset($options['query']);
@@ -252,6 +313,7 @@ class Api {
                 'form_params' => $data,
                 'timeout'=>$timeout,
                 'headers'=>$headers,
+                'allow_redirects'=>$allow_redirects,
             ];
             if(!$params){
                 unset($options['query']);
@@ -272,28 +334,28 @@ class Api {
         return true;
     }
 	
-	# 读取文件
-    private function ReadFile($file)
+    # 读取文件
+    public function ReadFile($file)
     {
         try{
             $myfile = fopen($file, "r");
             $centent= fread($myfile,filesize($file));
             fclose($myfile);
             return $centent;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             return FALSE;
         }
     }
     
-	# 写入文件
-    private function WriteFile($file, $centent, $type="w")
+    # 写入文件
+    public function WriteFile($file, $centent, $type="w")
     {
         try{
             $File = fopen($file, $type);
             fwrite($File, $centent);
             fclose($File);
             return TRUE;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             return FALSE;
         }
     }

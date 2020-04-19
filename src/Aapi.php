@@ -16,17 +16,22 @@ use pixiv\Api;
  */
 class Aapi extends Api{
     //put your code here
-    protected $hosts = "https://app-api.pixiv.net";
+    //protected $hosts = "https://app-api.pixiv.net";
     public $StatusCode;
     public $Headers;
     public $ReasonPhrase;
     public $body;
     public $getContents;
     public $json;
-    
+    protected $hosts = 'https://app-api.pixiv.net';
     public function ugoira_meta($illust_id){
         $url = "https://www.pixiv.net/ajax/illust/$illust_id/ugoira_meta";
-        $r = $this->guzzle_call('GET', $url);
+        if($this->request_type == 1){
+           $headers['Host'] = 'www.pixiv.net';
+           $host = $this->require_appapi_hosts('www.pixiv.net');
+           $url = str_replace('www.pixiv.net', $host, $url);
+        }
+        $r = $this->guzzle_call('GET', $url, $headers);
         return $this->parse_result($r);
     }
     
@@ -746,7 +751,7 @@ class Aapi extends Api{
             'illust_id'=> $illust_id,
             'filter'=> $filter,
         ];
-        $r = $this->no_auth_guzzle_call('POST', $url, $headers = [], $params, $data, $req_auth);
+        $r = $this->no_auth_guzzle_call('POST', $url, $headers = [], $params=[], $data, $req_auth);
         return $this->parse_result($r);
     }
     
@@ -1090,6 +1095,18 @@ class Aapi extends Api{
     }
 
     public function no_auth_guzzle_call($method, $url, $headers=[], $params=[], $data=[], $req_auth=True){
+        if($this->request_type == 1){
+            $parse_url = parse_url($url);
+            $host = $parse_url['host'];
+            if(!filter_var($host, FILTER_VALIDATE_IP)){
+                //$json_data = $this->require_appapi_hosts($host);
+                //$hosts = $json_data['Answer'][0]['data'];
+                $hosts = $this->require_appapi_hosts($host);
+                $headers['Host'] = $host;
+                $url = str_replace($host, $hosts, $url);
+            }
+            
+        }
         if(array_key_exists('User-Agent',$headers) == FALSE || array_key_exists('user-agent',$headers) == FALSE){
             # Set User-Agent if not provided
             $headers['App-OS'] = 'ios';
@@ -1125,12 +1142,25 @@ class Aapi extends Api{
         return $params;
     }
 
+    # 翻页参数转换
+    public function params_page($page){
+        if($page > 0){
+            $offset = $page * 30 - 30;
+        }else{
+            $offset = 0;
+        }
+        return $offset;
+    }
+
     # 翻页
-    public function next_page($next_url, $req_auth=True){
+    public function next_page($next_url, $page=Null,$req_auth=True){
         if($next_url == null){
             return null;
         }
         $params = $this->parse_qs($next_url);
+        if(is_int($page) && $page > 0){
+            $params['offset'] = $page * 30 - 30;
+        }
         $r = $this->no_auth_guzzle_call('GET', $next_url, $headers = [], $params, $req_auth);
         return $this->parse_result($r);
     }
