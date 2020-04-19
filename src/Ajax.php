@@ -60,6 +60,7 @@ class Ajax extends Api{
                 return 1;
             }
         }
+        
         $url = 'https://www.pixiv.net';
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[], $data=[]);
         # 处理返回的Json数据

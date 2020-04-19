@@ -45,6 +45,7 @@ class Aapi extends Api{
         if($json['error']){
             return FALSE;
         }
+
         $savePath = iconv('utf-8', 'gbk', $savePath);
         if(empty($fileName)){
             $fileName = $illust_id.'.gif';
@@ -58,7 +59,7 @@ class Aapi extends Api{
         //获取zip文件名
         $zipFile = substr($body[$tpye], strrpos($body[$tpye], '/')+1);
         //下载zip
-        $is_ok = $this->download($body[$tpye], $zipPath, $zipFile);
+        $is_ok = $this->download($body[$tpye], $zipPath, $zipFile, [ 'Referer' => 'https://www.pixiv.net/artworks/'.$illust_id ]);
         if($is_ok){
             //解压
             $this->decompression($zipPath.$zipFile, $tempPath);

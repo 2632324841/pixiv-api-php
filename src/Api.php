@@ -38,7 +38,10 @@ class Api {
     public function __construct($username='',$password='', $request_type=0, $lang='zh-cn', $token_path='./') {
         $jar = new \GuzzleHttp\Cookie\CookieJar();
 
-        $this->client = new GuzzleHttp\Client(['verify' => FALSE, 'cookies' => $jar, 'http_errors' => FALSE, 'allow_redirects'=>TRUE]);
+        $path_parts = pathinfo(__FILE__);
+        $path = $path_parts['dirname'].'/ssl/cacert.pem';
+
+        $this->client = new GuzzleHttp\Client(['verify' => $path, 'cookies' => $jar, 'http_errors' => FALSE, 'allow_redirects'=>TRUE]);
         $this->token_path = $token_path;
         $this->lang = $lang;
         $this->request_type = $request_type;
@@ -59,6 +62,7 @@ class Api {
         }
         //保存token
         $token_file = $this->token_path.'/'.$username.'.token';
+        
         //判断token是否存在
         if(is_file($token_file)){
             $json = $this->ReadFile($token_file);
@@ -121,7 +125,9 @@ class Api {
         {
             exit('username or password can not be empty');
         }
+        
         try {
+            
             $response = $this->guzzle_call('POST', $url, $headers, $params=[], $data);
             
             if($response->getStatusCode() == 200)
@@ -135,6 +141,7 @@ class Api {
                 return 1;
             }
             $re = json_decode((string)$response->getBody(),TRUE);
+
             exit((string)$response->getBody());
             if($re['has_error']){
                 exit('Error：'.$re['errors']['system']['message']);
