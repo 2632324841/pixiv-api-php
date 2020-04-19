@@ -190,7 +190,7 @@ class Ajax extends Api{
     /*
      * date 20190926
      * mode ranking
-     * mode_rank daily 天 weekly 周 monthly 月 rookie 新人 original 原创 male 受男性欢迎 female 受女性欢迎 
+     * mode daily 天 weekly 周 monthly 月 rookie 新人 original 原创 male 受男性欢迎 female 受女性欢迎 
      * content_rank all 全部 illust 插图 ugoira 动图 manga 漫画 
      */
     public function ranking($date=Null, $mode='daily', $p=1){
@@ -239,16 +239,6 @@ class Ajax extends Api{
         if($ref){
             $params['ref'] = $ref;
         }
-        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
-        return $this->parse_result($r);
-    }
-    
-    public function user_illusts($user_id, $lang='zh'){
-        $url = 'https://www.pixiv.net/touch/ajax/illust/user_illusts';
-        $params = [
-            'illust_id'=> $user_id,
-            'lang'=> $lang,
-        ];
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
         return $this->parse_result($r);
     }
@@ -505,7 +495,54 @@ class Ajax extends Api{
 
 
     
-    //用户信息
+    //用户信息 ajax
+    public function user_home($user_id, $lang = 'zh'){
+        $url = "https://www.pixiv.net/touch/ajax/user/home";
+        $params = [
+            'id'=>$user_id,
+            'lang'=>$lang,
+        ];
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+        return $this->parse_result($r);
+    }
+
+    //用户详情 ajax 
+    public function user_details($user_id, $lang = 'zh'){
+        $url = "https://www.pixiv.net/touch/ajax/user/details";
+        $params = [
+            'id'=>$user_id,
+            'lang'=>$lang,
+        ];
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+        return $this->parse_result($r);
+    }
+
+    //用户作品 ajax  illust manga
+    public function user_illusts($user_id, $type=null, $p=1, $lang = 'zh'){
+        $url = "https://www.pixiv.net/touch/ajax/user/illusts";
+        $params = [
+            'id'=>$user_id,
+            'type'=>$type,
+            'p'=>$p,
+            'lang'=>$lang,
+        ];
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+        return $this->parse_result($r);
+    }
+
+    //用户收藏 ajax 
+    public function user_bookmarks($user_id, $type='illust', $p=1, $lang = 'zh'){
+        $url = "https://www.pixiv.net/touch/ajax/user/bookmarks";
+        $params = [
+            'id'=>$user_id,
+            'type'=>$type,
+            'p'=>$p,
+            'lang'=>$lang,
+        ];
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+        return $this->parse_result($r);
+    }
+
     public function user_information($user_id, $full = 1){
         $url = "https://www.pixiv.net/ajax/user/$user_id";
         $params = [
@@ -514,6 +551,30 @@ class Ajax extends Api{
         $headers = $this->headers;
         $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
         $r = $this->ajax_guzzle_call('GET', $url, $headers, $params);
+        return $this->parse_result($r);
+    }
+
+    //用户作品收藏 pc
+    public function user_illusts_bookmarks($user_id, $tag=null, $offset=0, $limit=4, $rest='show'){
+        $url = "https://www.pixiv.net/ajax/user/$user_id/illusts/bookmarks";
+        $headers = $this->headers;
+        $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
+        $params = [
+            'tag'=>$tag,
+            'offset'=>$offset,
+            'limit'=>$limit,
+            'rest'=>$rest
+        ];
+        $r = $this->ajax_guzzle_call('GET', $url, $headers, $params);
+        return $this->parse_result($r);
+    }
+
+    //获取用户收藏作品的标签
+    public function user_illusts_bookmarks_tags($user_id){
+        $url = "https://www.pixiv.net/ajax/user/$user_id/illusts/bookmark/tags";
+        $headers = $this->headers;
+        $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
+        $r = $this->ajax_guzzle_call('GET', $url, $headers, $params=[]);
         return $this->parse_result($r);
     }
     
@@ -704,7 +765,7 @@ class Ajax extends Api{
     public function all_activity(){
        $unify_config = $this->unify_config();
        $url = 'https://www.pixiv.net/stacc/my/home/all/touch_nottext/'.$unify_config['pixiv.context.nextId'].'/js/';
-       //pixiv.context.nextId
+       //pixiv.context.nextId 
        $params = [
             'tt'=> $this->init_config['pixiv.context.postKey'],
         ];
@@ -743,6 +804,18 @@ class Ajax extends Api{
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
 
         return $this->parse_result($r);
+    }
+    
+    // type manga
+    public function popular_illust_r18($type=null, $p=1){
+        $url = 'https://www.pixiv.net/touch/ajax_api/ajax_api.php';
+        $params = [
+            'p'=>$p,
+        ];
+        if($type){
+            $params['type'] = $type;
+        }
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
     }
 
     //标签

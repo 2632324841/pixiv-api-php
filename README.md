@@ -53,6 +53,7 @@ $ajax->return_json();
 //$Aapi->request_type = 1;
 //$Aapi->login($username, $password);
 //$Aapi->user_illusts('40291400');
+//ecoh $Aapi->StatusCode;
 //print_r($Aapi->json);
 
 

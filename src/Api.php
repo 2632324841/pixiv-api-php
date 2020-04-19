@@ -342,7 +342,7 @@ class Api {
             $centent= fread($myfile,filesize($file));
             fclose($myfile);
             return $centent;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             return FALSE;
         }
     }
@@ -355,7 +355,7 @@ class Api {
             fwrite($File, $centent);
             fclose($File);
             return TRUE;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             return FALSE;
         }
     }
