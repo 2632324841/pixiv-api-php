@@ -19,7 +19,7 @@ use pixiv\Ajax;
 //print_r($ajax->json);
 
 
-//$Aapi = new Aapi();
+// $Aapi = new Aapi();
 
 //$Papi = new Papi();
 

@@ -13,13 +13,12 @@
     "require": {
         "php": ">=7.2",
         "guzzlehttp/guzzle": "~6.0",
-        "jaeger/querylist": "dev-master"
+        "jaeger/querylist": "V4.2.5"
     },
     "authors": [{
         "name": "deadlymous",
         "email": "2632324841@qq.com"
     }],
-    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "pixiv\\": "src/"
