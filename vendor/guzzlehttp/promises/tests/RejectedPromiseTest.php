@@ -3,12 +3,11 @@ namespace GuzzleHttp\Promise\Tests;
 
 use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Promise\RejectedPromise;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers GuzzleHttp\Promise\RejectedPromise
  */
-class RejectedPromiseTest extends TestCase
+class RejectedPromiseTest extends \PHPUnit_Framework_TestCase
 {
     public function testThrowsReasonWhenWaitedUpon()
     {
@@ -54,7 +53,6 @@ class RejectedPromiseTest extends TestCase
     {
         $p = new RejectedPromise('foo');
         $p->reject('foo');
-        $this->assertSame('rejected', $p->getState());
     }
 
     public function testThrowsSpecificException()
@@ -112,7 +110,6 @@ class RejectedPromiseTest extends TestCase
     {
         $p = new RejectedPromise('a');
         $p->wait(false);
-        $this->assertSame('rejected', $p->getState());
     }
 
     public function testOtherwiseIsSugarForRejections()

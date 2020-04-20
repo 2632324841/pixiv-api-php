@@ -13,7 +13,8 @@
     "require": {
         "php": ">=7.2",
         "guzzlehttp/guzzle": "~6.0",
-        "jaeger/querylist": "V4.2.5"
+        "jaeger/querylist": "V4.2.5",
+        "sybio/gif-creator": "^1.0"
     },
     "authors": [{
         "name": "deadlymous",

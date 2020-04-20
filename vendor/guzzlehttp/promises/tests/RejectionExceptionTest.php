@@ -2,7 +2,6 @@
 namespace GuzzleHttp\Promise\Tests;
 
 use GuzzleHttp\Promise\RejectionException;
-use PHPUnit\Framework\TestCase;
 
 class Thing1
 {
@@ -28,7 +27,7 @@ class Thing2 implements \JsonSerializable
 /**
  * @covers GuzzleHttp\Promise\RejectionException
  */
-class RejectionExceptionTest extends TestCase
+class RejectionExceptionTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanGetReasonFromException()
     {

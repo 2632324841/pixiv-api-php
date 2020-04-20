@@ -3,12 +3,11 @@ namespace GuzzleHttp\Tests\Promise;
 
 use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Promise\FulfilledPromise;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers GuzzleHttp\Promise\FulfilledPromise
  */
-class FulfilledPromiseTest extends TestCase
+class FulfilledPromiseTest extends \PHPUnit_Framework_TestCase
 {
     public function testReturnsValueWhenWaitedUpon()
     {
@@ -49,7 +48,6 @@ class FulfilledPromiseTest extends TestCase
     {
         $p = new FulfilledPromise('foo');
         $p->resolve('foo');
-        $this->assertSame('foo', $p->wait());
     }
 
     /**

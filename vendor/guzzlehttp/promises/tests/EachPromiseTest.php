@@ -7,26 +7,16 @@ use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Promise\EachPromise;
 use GuzzleHttp\Promise as P;
-use PHPUnit\Framework\TestCase;
 
 /**
  * @covers GuzzleHttp\Promise\EachPromise
  */
-class EachPromiseTest extends TestCase
+class EachPromiseTest extends \PHPUnit_Framework_TestCase
 {
     public function testReturnsSameInstance()
     {
         $each = new EachPromise([], ['concurrency' => 100]);
         $this->assertSame($each->promise(), $each->promise());
-    }
-
-    public function testResolvesInCaseOfAnEmptyList()
-    {
-        $promises = [];
-        $each = new EachPromise($promises);
-        $p = $each->promise();
-        $this->assertNull($p->wait());
-        $this->assertEquals(PromiseInterface::FULFILLED, $p->getState());
     }
 
     public function testInvokesAllPromises()
@@ -167,23 +157,13 @@ class EachPromiseTest extends TestCase
 
     public function testCanBeCancelled()
     {
-        $called = false;
-        $a = new FulfilledPromise('a');
-        $b = new Promise(function () use (&$called) { $called = true; });
-        $each = new EachPromise([$a, $b], [
-            'fulfilled' => function ($value, $idx, Promise $aggregate) {
-                $aggregate->cancel();
-            },
-            'rejected' => function ($reason) use (&$called) {
-                $called = true;
-            },
-        ]);
-        $p = $each->promise();
-        $p->wait(false);
-        $this->assertEquals(PromiseInterface::FULFILLED, $a->getState());
-        $this->assertEquals(PromiseInterface::PENDING, $b->getState());
-        $this->assertEquals(PromiseInterface::REJECTED, $p->getState());
-        $this->assertFalse($called);
+        $this->markTestIncomplete();
+    }
+
+    public function testFulfillsImmediatelyWhenGivenAnEmptyIterator()
+    {
+        $each = new EachPromise(new \ArrayIterator([]));
+        $result = $each->promise()->wait();
     }
 
     public function testDoesNotBlowStackWithFulfilledPromises()
@@ -255,7 +235,7 @@ class EachPromiseTest extends TestCase
         $received = null;
         $p->then(null, function ($reason) use (&$e) { $e = $reason; });
         P\queue()->run();
-        $this->assertInstanceOf(\Exception::class, $e);
+        $this->assertInstanceOf('Exception', $e);
         $this->assertEquals('Failure', $e->getMessage());
     }
 
@@ -352,28 +332,5 @@ class EachPromiseTest extends TestCase
 
         $each->promise()->wait();
         $this->assertCount(20, $results);
-    }
-
-    public function testIteratorWithSameKey()
-    {
-        $iter = function () {
-            yield 'foo' => $this->createSelfResolvingPromise(1);
-            yield 'foo' => $this->createSelfResolvingPromise(2);
-            yield 1 => $this->createSelfResolvingPromise(3);
-            yield 1 => $this->createSelfResolvingPromise(4);
-        };
-        $called = 0;
-        $each = new EachPromise($iter(), [
-            'fulfilled' => function ($value, $idx, Promise $aggregate) use (&$called) {
-                $called++;
-                if ($value < 3) {
-                    $this->assertSame('foo', $idx);
-                } else {
-                    $this->assertSame(1, $idx);
-                }
-            },
-        ]);
-        $each->promise()->wait();
-        $this->assertSame(4, $called);
     }
 }
