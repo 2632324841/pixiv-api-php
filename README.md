@@ -3,7 +3,7 @@
 类似于[upbit/pixivpy](https://github.com/upbit/pixivpy)
 
 ## 使用composer 安装
-> composer require deadlymous/pixiv_api --dev
+> composer require "deadlymous/pixiv_api:dev-master"
 *****
 建议PHP版本 7.2+
 ## 实例
