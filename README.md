@@ -2,129 +2,48 @@
 这是一个Pixiv IOS API 
 类似于[upbit/pixivpy](https://github.com/upbit/pixivpy)
 
-## 安装
-> composer require deadlymous/pixiv_api
-
+## 使用composer 安装
+> composer require deadlymous/pixiv_api --dev
+*****
+建议PHP版本 7.2+
 ## 实例
 ```php
-require_once __DIR__ . '/vendor/autoload.php';
-use pixiv\Aapi;
-use pixiv\Papi;
-use pixiv\Ajax;
+<?php
 
+require_once __DIR__ . '/vendor/autoload.php';
+//引用Api
 
-//$ajax = new Ajax();
-//$cookie = '';
-//$ajax->set_init($cookie);
-//# yyyyMMdd
-//$ajax->ranking('20190912');
-//$ajax->popular_illust();
-//# $wlt 最小宽度 $wgt 最大宽度
-//$ajax->search_illusts('碧蓝航线', 1, 'safe', 's_tag', $p=1, $order=null, $ratio=0.5, $wlt=1920, $wgt=null, $hlt=1080, $hgt=null);
-//echo $re;
-//$ajax->search_illusts_pc('プリンツ・オイゲン(アズールレーン)');
-//print_r($ajax->json);
-
-
-//$Aapi = new Aapi();
-
-//$Papi = new Papi();
-
-$ajax = new Ajax();
-//设置 页面上的cookie
-$cookie = '';
+use pixiv\Aapi;
+use pixiv\Papi;
+use pixiv\Ajax;
+//创建Api Ajax对象
+$ajax = new Ajax();
+//设置cookie
+$cookie = '你登录P站后的页面cookie';
 //设置cookie
 $ajax->set_init($cookie);
-//# yyyyMMdd
-//$ajax->ranking('20190912');
-//$ajax->popular_illust();
-//# $wlt 最小宽度 $wgt 最大宽度
-// $ajax->search_illusts('碧蓝航线', 1, 'safe', 's_tag', $p=1, $order=null, $ratio=0.5, $wlt=1920, $wgt=null, $hlt=1080, $hgt=null);
-$ajax->all_activity();
+//调用Pixiv 接口类型
+$ajax->user_history('illust',0);
+//返回的数组
+print_r($ajax->json);
+//可以快速打印JSON
 $ajax->return_json();
-//$ajax->search_illusts_pc('プリンツ・オイゲン(アズールレーン)');
-//print_r($ajax->json);
+//如果是其他Api
+$Aapi = new Aapi();
+$username = '你的邮箱';
+$password = '你的密码';
+//该设置已经弃用
+//$Aapi->request_type = 0;
+//登录
+$Aapi->login($username, $password);
+//用户作品列表
+$Aapi->user_illusts('40291400');
+print_r($Aapi->json);
 
-
-//$Aapi = new Aapi();
-
-//$username = '';
-//$password = '';
-//$Aapi->request_type = 1;
-//$Aapi->login($username, $password);
-//$Aapi->user_illusts('40291400');
-//ecoh $Aapi->StatusCode;
-//print_r($Aapi->json);
-
-
-//echo $Aapi->StatusCode;
-
-//下载动图
-//$Aapi->ugoira_meta_save(72729032);
-//
-//$username = '';
-//$password = '';
-//$Aapi->request_type = 1;
-//$Aapi->login($username, $password);
-//$Aapi->user_illusts('40291400');
-//print_r($Aapi->json);
-//echo $Aapi->StatusCode;
-//下载动图
-//$Aapi->ugoira_meta_save(72729032);
-
-//$Papi = new Papi();
-//$Papi->login($username, $password);
-//$Papi->request_type=1;
-//$Papi->works(76788220);
-//echo 'StatusCode:'.$Papi->StatusCode;
-//print_r($Papi->json);
-
-//$Aapi->illust_detail(76472054);
-
-//$Aapi->illust_related(76472054,'for_ios',['76496233','76454229']);
-//$Aapi->illust_recommended();
-//$Aapi->illust_ranking();
-//$Aapi->trending_tags_illust();
-//$Aapi->search_illust($word='碧蓝航线');
-//$Aapi->illust_bookmark_detail(76472054);
-//$Aapi->illust_bookmark_add(71422901);
-//$Aapi->user_bookmark_tags_illust();
-//$Aapi->user_following(2374176);
-//$Aapi->ugoira_metadata();
-//$Aapi->spotlight_articles();
-//$Aapi->search_autocomplete('碧蓝航线');
-//$Aapi->recommended_user();
-//$Aapi->markers_novel();
-//$Aapi->delete_user(19257936);
-//$Aapi->user_bookmarks_illust($this->user_id, 'public');
-//$Aapi->search_illust_popular_preview('綾波');
-//$Aapi->user_state();
-//$Aapi->search_illust_bookmark_ranges('綾波');
-//$Aapi->illust_walkthrough();
-//$Aapi->illust_new_v1(71422901);
-//$Aapi->illust_my_pixiv();
-//$Aapi->manga_recommended();
-//$Aapi->illust_ranking('2019-09-07');
-//$Aapi->json($re->json);
-
-
-
-
-//$Papi->works(73726426);
-//$Papi->users(14525258);
-//$Papi->me_favorite_works();
-//$Papi->me_following_works();
-//$Papi->me_following();
-//$Papi->me_favorite_users_follow(20228000);
-//$Papi->me_favorite_users_unfollow([17560794,263118]);
-//$Papi->users_works(16700831);
-//$Papi->users_following(16700831);
-//$Papi->ranking('2019-09-01');
-//$Papi->search_works('碧蓝航线');
-//$Papi->latest_works();
 ```
 # 更新日志
 
+* [2020-05-28] 修改Api 请求 优化Ajax Api
 * [2020-04-20] 修复接口问题 DNS解析IP访问有SSL握手错误
 * [2019-12-16] 添加动态接口
 * [2019-XX-XX] 忘记是啥时候了，修复登录验证问题

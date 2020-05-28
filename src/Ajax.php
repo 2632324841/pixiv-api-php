@@ -17,7 +17,7 @@ class Ajax extends Api{
     //put your code here
     protected $headers = [
         //'origin'=> 'https://www.pixiv.net',
-        'user-agent'=> 'Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1',
+        'user-agent'=> 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
         'x-requested-with'=> 'XMLHttpRequest',
     ];
     protected $init_config;
@@ -31,7 +31,6 @@ class Ajax extends Api{
     public $getContents;
     public $json;
     
-
     public function set_init($cookie){
         //如果是文件路径
         if(is_file($cookie)){
@@ -72,7 +71,6 @@ class Ajax extends Api{
         $this->init_config = $json;
         $HtmlDom = QueryList::html($html);
         $json = $HtmlDom->find('#init-config')->content;
-        //$temp = substr($html, strpos($html, 'init-config',1) + 41 , strpos($html, '<script') - (strpos($html, 'init-config',1) + 43));
         $json = json_decode($json, TRUE);
         $json['create_time'] = time();
         $this->WriteFile($init_file, json_encode($json, JSON_UNESCAPED_UNICODE));
@@ -81,6 +79,20 @@ class Ajax extends Api{
         $this->headers['x-csrf-token'] = $json['pixiv.context.postKey'];
         $this->headers['x-user-id'] = $json['pixiv.user.id'];
         return 1;
+    }
+
+    //切换请求类型
+    public function user_agent($type = 'PC'){
+        switch($type){
+            case 'PC':$this->headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
+            break;
+            case 'IOS':$this->headers['user-agent'] = 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1';
+            break;
+            case 'Android':$this->headers['user-agent'] = 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 7 Build/MOB30X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36';
+            break;
+            default:$this->headers['user-agent'] = 'Mozilla/5.0 (Linux; Android 8.0.0; Pixel 2 XL Build/OPD1.170816.004) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Mobile Safari/537.36';
+            break;
+        }
     }
     
     public function ajax_guzzle_call($method, $url, $headers=[], $params=[], $data=[]){
@@ -201,7 +213,7 @@ class Ajax extends Api{
             'mode'=> $mode,
             'p'=> $p,
         ];
-        $this->header['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
+        $this->user_agent('PC');
         if($date){
             $params['date'] = $date;
         }
@@ -425,9 +437,8 @@ class Ajax extends Api{
             'tool'=> $this->params($data, 'tool'),
             'lang'=> $this->params($data, 'lang', 'zh'),
         ];
-        $headers = $this->headers;
-        $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
-        $r = $this->ajax_guzzle_call('GET', $url, $headers, $params);
+        $this->user_agent('PC');
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
         $html = (string)$r->getBody();
         
         $HtmlDom = QueryList::html($html);
@@ -497,18 +508,16 @@ class Ajax extends Api{
             'tool'=> $this->params($data, 'tool'),
             'lang'=> $this->params($data, 'lang', 'zh'),
         ];
-        $headers = $this->headers;
-        $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
-        $r = $this->ajax_guzzle_call('GET', $url, $headers, $params);
+        $this->user_agent('PC');
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
         return $this->parse_result($r);
     }
     
-    //emmmm
+    //作品标签
     public function artworks_tags($word){
         $url = "https://www.pixiv.net/ajax/search/tags/$word";
-        $headers = $this->headers;
-        $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
-        $r = $this->ajax_guzzle_call('GET', $url, $headers, $params=[]);
+        $this->user_agent('PC');
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[]);
         return $this->parse_result($r);
     }
 
@@ -567,42 +576,38 @@ class Ajax extends Api{
         $params = [
             'full'=>$full,
         ];
-        $headers = $this->headers;
-        $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
-        $r = $this->ajax_guzzle_call('GET', $url, $headers, $params);
+        $this->user_agent('PC');
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
         return $this->parse_result($r);
     }
 
     //用户作品收藏 pc
     public function user_illusts_bookmarks($user_id, $tag=null, $offset=0, $limit=4, $rest='show'){
         $url = "https://www.pixiv.net/ajax/user/$user_id/illusts/bookmarks";
-        $headers = $this->headers;
-        $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
+        $this->user_agent('PC');
         $params = [
             'tag'=>$tag,
             'offset'=>$offset,
             'limit'=>$limit,
             'rest'=>$rest
         ];
-        $r = $this->ajax_guzzle_call('GET', $url, $headers, $params);
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
         return $this->parse_result($r);
     }
 
     //获取用户收藏作品的标签
     public function user_illusts_bookmarks_tags($user_id){
         $url = "https://www.pixiv.net/ajax/user/$user_id/illusts/bookmark/tags";
-        $headers = $this->headers;
-        $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
-        $r = $this->ajax_guzzle_call('GET', $url, $headers, $params=[]);
+        $this->user_agent('PC');
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[]);
         return $this->parse_result($r);
     }
     
     //用户最新作品
     public function user_latest($user_id){
         $url = "https://www.pixiv.net/ajax/user/$user_id/works/latest";
-        $headers = $this->headers;
-        $headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
-        $r = $this->ajax_guzzle_call('GET', $url, $headers, $params=[]);
+        $this->user_agent('PC');
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[]);
         return $this->parse_result($r);
     }
 
@@ -715,13 +720,15 @@ class Ajax extends Api{
         return $this->parse_result($r);
     }
     
+    //用户设置信息
     public function user_settings(){
         $url = 'https://www.pixiv.net/touch/ajax/settings';
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[]);
         return $this->parse_result($r);
     }
     
-    public function update_age_check($user_x_restrict=0, $mode='set_user_x_restrict'){
+    //设置流量范围 set_user_x_restrict  0 全年龄 1 R18 2 R18加怪诞
+    public function set_user_x_restrict($user_x_restrict=0, $mode='set_user_x_restrict'){
         $url = 'https://www.pixiv.net/touch/ajax_api/ajax_api.php';
         $data = [
             'user_x_restrict'=> $user_x_restrict,
@@ -732,10 +739,35 @@ class Ajax extends Api{
 
         return $this->parse_result($r);
     }
+
+    //设置语言 zh_tw zh ko en ja
+    public function settings_language($lang = 'zh_tw'){
+        $url = 'https://www.pixiv.net/touch/ajax/settings/language';
+        $data = [
+            'code'=>$lang,
+            'tt'=> $this->init_config['pixiv.context.postKey'],
+        ];
+        $r = $this->ajax_guzzle_call('POST', $url, $this->headers, $params=[], $data);
+
+        return $this->parse_result($r);
+    }
+
+    //设置Pixiv 内网广告状态 需要P站会员
+    public function set_ads_status($ads_hide = 0, $mode='set_ads_status'){
+        $url = 'https://www.pixiv.net/touch/ajax_api/ajax_api.php';
+        $data = [
+            'ads_hide'=> $ads_hide,
+            'mode'=> $mode,
+            'tt'=> $this->init_config['pixiv.context.postKey'],
+        ];
+        $r = $this->ajax_guzzle_call('POST', $url, $this->headers, $params=[], $data);
+
+        return $this->parse_result($r);
+    }
     
     public function tags(){
         $url = 'https://www.pixiv.net/tags';
-        $this->headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
+        $this->user_agent('PC');
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[]);
         $html = (string)$r->getBody();
         $ql = QueryList::html($html);
@@ -895,7 +927,7 @@ class Ajax extends Api{
     //推荐用户列表 带作品
     public function recommend_users($user_ids, $user_num=30, $work_num=5){
         $url = 'https://www.pixiv.net/rpc/index.php';
-        $this->headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
+        $this->user_agent('PC');
         $params = [
             'mode'=>'get_recommend_users_and_works_by_user_ids',
             'user_num'=>$user_num,
@@ -914,7 +946,7 @@ class Ajax extends Api{
     //推荐作品列表 需要传作品Id
     public function recommend_illust_list($illust_ids, $exclude_muted_illusts=1){
         $url = 'https://www.pixiv.net/rpc/illust_list.php';
-        $this->headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
+        $this->user_agent('PC');
         $params = [
             'page'=>'discover',
             'exclude_muted_illusts'=>$exclude_muted_illusts
@@ -932,7 +964,7 @@ class Ajax extends Api{
     //大家的新作 lastId可以传作品id type [ manga,illust ]
     public function illust_new_pc($lastId=0, $limit=20, $type='illust', $r18=false){
         $url = 'https://www.pixiv.net/ajax/illust/new';
-        $this->headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
+        $this->user_agent('PC');
         $params = [
             'lastId'=>$lastId,
             'limit'=>$limit,
@@ -948,9 +980,9 @@ class Ajax extends Api{
     //浏览历史 novel illust
     public function user_history($type = 'illust', $offset=0){
         $url = 'https://www.pixiv.net/ajax/history';
-        $this->headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
+        $this->user_agent('PC');
         $params = [
-            'type'=>'illust',
+            'type'=>$type,
             'offset'=>$offset,
         ];
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
@@ -958,10 +990,51 @@ class Ajax extends Api{
         return $this->parse_result($r);
     }
 
+    //获取用户展示作品数据 illust_num 作品数量 novel_num 小说数量
+    public function get_user_profile($user_ids, $illust_num = 3, $novel_num = 3){
+        $url = 'https://www.pixiv.net/rpc/get_profile.php';
+        if(is_array($user_ids)){
+            $user_ids = implode(',',$user_ids);
+        }
+        $params = [
+            'user_ids'=>$user_ids,
+            'illust_num'=>$illust_num,
+            'novel_num'=>$novel_num,
+        ];
+        $this->user_agent('PC');
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+        return $this->parse_result($r);
+    }
+
+    //用户额外数据
+    public function user_extra(){
+        $url = 'https://www.pixiv.net/ajax/user/extra';
+        $this->user_agent('PC');
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[]);
+        return $this->parse_result($r);
+    }
+
+    //热门绘画方法
+    public function knowhow_thumbnail_collection(){
+        $url = 'https://www.pixiv.net/howto';
+        $this->user_agent('PC');
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[]);
+        $html = (string)$r->getBody();
+        $ql = QueryList::html($html);
+        $json = $ql->find('#js-knowhow-thumbnail-collection')->attr('data-illusts');
+        $this->StatusCode = $r->getStatusCode();
+        $this->Headers = $r->getHeaders();
+        $this->ReasonPhrase = $r->getReasonPhrase();
+        $this->body = $r->getBody();
+        $this->getContents = (string)$r->getBody();
+        $this->json = json_decode($json, true);
+        return $this;
+    }
+
     //竞赛作品 order [date,popular_d,date_d]
     public function pixiv_contest($contest_name,$order='date',$p=1){
         $url = 'https://www.pixiv.net/ajax/contest/'.$contest_name.'/entries';
-        $this->headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
+        $this->user_agent('PC');
         $params = [
             'order'=>$order,
             'p'=>$p,
@@ -994,44 +1067,6 @@ class Ajax extends Api{
         $this->getContents = (string)$r->getBody();
         $this->json = $json;
         return $this;
-    }
-
-    public function test(){
-        $url = 'https://www.pixiv.net/contest/';
-        $this->headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
-        $r = $this->guzzle_call('GET', $url, $this->headers, $params=[]);
-        //$html = (string)$r->getBody();
-        //$ql = QueryList::html($html);
-        echo (string)$r->getBody();exit;
-        //return $this->parse_result($r);
-    }
-
-    public function login_pc(){
-        $username = '';
-        $password = '';
-        $url = 'https://accounts.pixiv.net/login?return_to=https%3A%2F%2Fwww.pixiv.net%2F&lang=zh&source=pc&view_type=page';
-        $this->headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36';
-        $this->headers['cookie'] = '';
-        $r = $this->guzzle_call('GET', $url, $this->headers, $params=[]);
-        $google = 'https://www.google.com/recaptcha/api2/reload';
-        $html = (string)$r->getBody();
-        $ql = QueryList::html($html);
-        $init_config = $ql->find('#init-config')->attr('value');
-        $init_json = json_decode($init_config, true);
-        $script = $ql->find('script');
-        //print_r($script);exit;
-        $referer = 'https://www.google.com/recaptcha/api2/anchor?ar=1&k=6LfJ0Z0UAAAAANqP-8mvUln2z6mHJwuv5YGtC8xp&co=aHR0cHM6Ly9hY2NvdW50cy5waXhpdi5uZXQ6NDQz&hl=zh-CN&v=JZfekeK8w6ZlhLfH_ZyseSLX&size=invisible&cb=w6z6l4rkv9up';
-        $headers = [
-            'content-type'=>'application/x-protobuffer',
-            'origin'=>'https://www.google.com',
-            'referer'=> $referer,
-            'user-agent'=>'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36 QIHU 360EE',
-        ];
-        $r = $this->guzzle_call('POST', $google, $headers, $params=[
-            'k'=>'6LfJ0Z0UAAAAANqP-8mvUln2z6mHJwuv5YGtC8xp'//$init_json['pixivAccount.recaptchaSiteKey']
-        ]);
-        $google_html = (string)$r->getBody();
-        echo $google_html;
     }
 
     private function unify_config(){

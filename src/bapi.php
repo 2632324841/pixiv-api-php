@@ -12,7 +12,7 @@ use pixiv\Api;
  *
  * @author Administrator
  */
-class bapi extends Api{
+class Bapi extends Api{
     //put your code here
     
     public function require_appapi_hosts($hostname='app-api.pixiv.net'){

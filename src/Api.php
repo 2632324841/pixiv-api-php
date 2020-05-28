@@ -10,13 +10,15 @@ namespace pixiv;
 use GuzzleHttp;
 use GuzzleHttp\Exception\RequestException;
 use GifCreator\GifCreator;
+use GuzzleHttp\Promise;
+use pixiv\Http;
 
 /**
  * Description of Api
  *
  * @author JC
  */
-class Api {
+class Api extends Http{
     protected $client_id = 'MOBrBDS8blbauoSck0ZfDbtuzpyT';
     protected $client_secret = 'lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj';
     protected $hash_secret = '28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c';
@@ -25,7 +27,6 @@ class Api {
     protected $refresh_token;
     protected $user_id = 0;
     protected $save_time = 3600;
-    protected $client;
 
     protected $token_path = './';
     protected $lang;
@@ -36,12 +37,7 @@ class Api {
 
 
     public function __construct($username='',$password='', $request_type=0, $lang='zh-cn', $token_path='./') {
-        $jar = new \GuzzleHttp\Cookie\CookieJar();
-
-        $path_parts = pathinfo(__FILE__);
-        $path = $path_parts['dirname'].'/ssl/cacert.pem';
-
-        $this->client = new GuzzleHttp\Client(['verify' => $path, 'cookies' => $jar, 'http_errors' => FALSE, 'allow_redirects'=>TRUE]);
+        parent::construct();
         $this->token_path = $token_path;
         $this->lang = $lang;
         $this->request_type = $request_type;
@@ -128,7 +124,7 @@ class Api {
         
         try {
             
-            $response = $this->guzzle_call('POST', $url, $headers, $params=[], $data);
+            $response = $this->client->guzzle_call('POST', $url, $headers, $params=[], $data);
             
             if($response->getStatusCode() == 200)
             {
@@ -168,7 +164,7 @@ class Api {
             }
         }
         $url = "https://1.0.0.1/dns-query?ct=application/dns-json&name=$hostname&type=A&do=false&cd=false";
-        $r = $this->guzzle_call('GET', $url);
+        $r = $this->client->guzzle_call('GET', $url);
         $json = json_decode($r->getBody(), TRUE);
         $data[$hostname] = $json['Answer'];
         $this->WriteFile($fileName, json_encode($data, JSON_UNESCAPED_UNICODE));
@@ -200,7 +196,8 @@ class Api {
         if(is_array($json)){
             header('Content-Type:application/json; charset=utf-8');
             http_response_code($code);
-            exit(json_encode($json, JSON_UNESCAPED_UNICODE));
+            echo json_encode($json, JSON_UNESCAPED_UNICODE);
+            exit();
         }
         return FALSE;
     }
@@ -233,6 +230,48 @@ class Api {
         }catch(\Exception $e){
             return false;
         }
+    }
+
+    public function download_files($url, $path = 'image/', $headers = [ 'Referer' => 'https://app-api.pixiv.net/' ]){
+        if(!is_array($url)){
+            $url = [
+                $url,
+            ];
+        }
+        $download_list = [];
+        $temp_url = $url;
+        foreach($url as $key=>$val){
+            $path = iconv('utf-8', 'gbk', $path);
+            $fileName = substr($val, strrpos($val, '/')+1);
+            if(!is_dir($path)){
+                mkdir($path, 0777);
+            }
+            $saveFilePath = $path.$fileName;
+            if(is_file($saveFilePath)){
+                $temp_url[$key] = [
+                    'url'=>$val,
+                    'status'=>1,
+                ];
+                continue;
+            }
+            $download_list[$key] = $this->client->getAsync($val,['headers'=> $headers,'save_to'=> $saveFilePath]);
+        }
+        $results = Promise\unwrap($download_list);
+        foreach($results as $key=>$val){
+            $code = $val->getStatusCode();
+            if($code <=206){
+                $temp_url[$key] = [
+                    'url'=>$temp_url[$key],
+                    'status'=>1,
+                ];
+            }else{
+                $temp_url[$key] = [
+                    'url'=>$temp_url[$key],
+                    'status'=>0,
+                ];
+            }
+        }
+        return $temp_url;
     }
     
     public function decompression($filePath, $savePath){
@@ -269,69 +308,6 @@ class Api {
         } catch (\Exception $ex) {
             return FALSE;
         }
-    }
-
-    public function guzzle_call($method, $url, $headers=[], $params=[], $data=[], $allow_redirects=True, $json=[], $timeout=10){
-
-        $client = $this->client;
-        if($method == 'GET')
-        {
-            $options = [
-                'query' => $params,
-                'timeout'=>$timeout,
-                'headers'=>$headers,
-                'allow_redirects'=>$allow_redirects,
-            ];
-            if(!$params){
-                unset($options['query']);
-            }
-            $response = $client->request($method, $url, $options);
-        }
-        else if($method == 'POST'){
-            $options = [
-                'query' => $params,
-                'form_params' => $data,
-                'timeout'=>$timeout,
-                'headers'=>$headers,
-                'allow_redirects'=>$allow_redirects,
-            ];
-            if(!$params){
-                unset($options['query']);
-            }
-            $response = $client->request($method, $url, $options);
-        }
-        else if($method == 'PUT'){
-            $options = [
-                'query' => $params,
-                'form_params' => $data,
-                'json' => $json,
-                'timeout'=>$timeout,
-                'headers'=>$headers,
-                'allow_redirects'=>$allow_redirects,
-            ];
-            if(!$params){
-                unset($options['query']);
-            }
-            $response = $client->request($method, $url, $options);
-        }
-        else if($method == 'DELETE'){
-            $options = [
-                'query' => $params,
-                'form_params' => $data,
-                'timeout'=>$timeout,
-                'headers'=>$headers,
-                'allow_redirects'=>$allow_redirects,
-            ];
-            if(!$params){
-                unset($options['query']);
-            }
-            $response = $client->request($method, $url, $options);
-        }
-        else
-        {
-            return FALSE;
-        }
-        return $response;
     }
     
     public function require_auth(){

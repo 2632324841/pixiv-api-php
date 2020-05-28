@@ -41,14 +41,22 @@ $ajax->set_init($cookie);
 // $ajax->return_json();
 // $ajax->search_illusts_pc('プリンツ・オイゲン(アズールレーン)');
 //$ajax->tags_frequent_illust('80644077');
-$ajax->user_history('illust',0);
-print_r($ajax->json);
+// $ajax->user_profile_top('4462245');
+//print_r($ajax->json);
 
+$ajax->search_illusts("西木野真姬",['mode'=>'safe','order'=>'popular_d']);
+$url = [];
+foreach($ajax->json['body']['illusts'] as $val){
+    $url[] = $val['url_w'];
+}
+
+print_r($ajax->download_files($url));
+//$ajax->return_json();
 
 //$Aapi = new Aapi();
 
-// $username = '2632324841@qq.com';
-// $password = 'wasd123456';
+// $username = '';
+// $password = '';
 // $Aapi->request_type = 0;
 // $Aapi->login($username, $password);
 //$Aapi->user_illusts('40291400');
