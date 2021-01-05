@@ -206,11 +206,11 @@ class Ajax extends Api{
      * mode daily 天 weekly 周 monthly 月 rookie 新人 original 原创 male 受男性欢迎 female 受女性欢迎 
      * content_rank all 全部 illust 插图 ugoira 动图 manga 漫画 
      */
-    public function ranking($date=Null, $mode='daily', $p=1){
+    public function ranking($date=Null, $content= 'illust', $mode='daily', $p=1){
         //$url = 'https://www.pixiv.net/ranking.php?date='.$date.'&mode='.$mode.'&format=json&p='.$p;
         $url = 'https://www.pixiv.net/ranking.php';
         $params = [
-            'content'=> 'illust',
+            'content'=> $content,
             'mode'=> $mode,
             'p'=> $p,
             'format'=> 'json'
