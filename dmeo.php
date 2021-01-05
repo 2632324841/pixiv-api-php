@@ -44,7 +44,7 @@ $ajax->set_init($cookie);
 // $ajax->user_profile_top('4462245');
 //print_r($ajax->json);
 
-print_r($ajax->new_ranking());
+print_r($ajax->ranking());
 
 // $ajax->search_illusts("西木野真姬",['mode'=>'safe','order'=>'popular_d']);
 // $url = [];

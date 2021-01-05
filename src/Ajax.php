@@ -84,13 +84,13 @@ class Ajax extends Api{
     //切换请求类型
     public function user_agent($type = 'PC'){
         switch($type){
-            case 'PC':$this->headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36';
+            case 'PC':$this->headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36';
             break;
             case 'IOS':$this->headers['user-agent'] = 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1';
             break;
             case 'Android':$this->headers['user-agent'] = 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 7 Build/MOB30X) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36';
             break;
-            default:$this->headers['user-agent'] = 'Mozilla/5.0 (Linux; Android 8.0.0; Pixel 2 XL Build/OPD1.170816.004) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Mobile Safari/537.36';
+            default:$this->headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36';
             break;
         }
     }
@@ -208,10 +208,12 @@ class Ajax extends Api{
      */
     public function ranking($date=Null, $mode='daily', $p=1){
         //$url = 'https://www.pixiv.net/ranking.php?date='.$date.'&mode='.$mode.'&format=json&p='.$p;
-        $url = 'https://www.pixiv.net/ranking.php?format=json';
+        $url = 'https://www.pixiv.net/ranking.php';
         $params = [
+            'content'=> 'illust',
             'mode'=> $mode,
             'p'=> $p,
+            'format'=> 'json'
         ];
         $this->user_agent('PC');
         if($date){
