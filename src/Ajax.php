@@ -61,6 +61,7 @@ class Ajax extends Api{
         }
         
         $url = 'https://www.pixiv.net';
+        $this->user_agent('Android');
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[], $data=[]);
         # 处理返回的Json数据
         $html = (string)$r->getBody();
@@ -68,7 +69,6 @@ class Ajax extends Api{
         /*$temp = substr($html, strpos($html, 'init-config',1) + 41 , strpos($html, '<script') - (strpos($html, 'init-config',1) + 43));
         $json = json_decode($temp, true);*/
         # 设置配置数据
-        $this->init_config = $json;
         $HtmlDom = QueryList::html($html);
         $json = $HtmlDom->find('#init-config')->content;
         $json = json_decode($json, TRUE);
