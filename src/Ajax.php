@@ -227,9 +227,10 @@ class Ajax extends Api{
      * mode daily 天 weekly 周 monthly 月 rookie 新人 original 原创 male 受男性欢迎 female 受女性欢迎 
      * content_rank all 全部 illust 插图 ugoira 动图 manga 漫画 
      */
-    public function new_ranking($mode='daily', $type='all', $p=1, $lang='zh'){
+    public function new_ranking($date=NULL,$mode='daily', $type='all', $p=1, $lang='zh'){
         $url = 'https://www.pixiv.net/touch/ajax/ranking/illust';
         $params = [
+            'date'=> $date,
             'mode'=> $mode,
             'type'=> $type,
             'page'=> $p,

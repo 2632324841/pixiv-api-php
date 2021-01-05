@@ -1,8 +1,10 @@
 <?php
-namespace GuzzleHttp\Tests\Promise;
 
-use GuzzleHttp\Promise\Promise;
+namespace GuzzleHttp\Promise\Tests;
+
+use GuzzleHttp\Promise as P;
 use GuzzleHttp\Promise\FulfilledPromise;
+use GuzzleHttp\Promise\Promise;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -13,34 +15,36 @@ class FulfilledPromiseTest extends TestCase
     public function testReturnsValueWhenWaitedUpon()
     {
         $p = new FulfilledPromise('foo');
-        $this->assertEquals('fulfilled', $p->getState());
-        $this->assertEquals('foo', $p->wait(true));
+        $this->assertTrue(P\Is::fulfilled($p));
+        $this->assertSame('foo', $p->wait(true));
     }
 
     public function testCannotCancel()
     {
         $p = new FulfilledPromise('foo');
-        $this->assertEquals('fulfilled', $p->getState());
+        $this->assertTrue(P\Is::fulfilled($p));
         $p->cancel();
-        $this->assertEquals('foo', $p->wait());
+        $this->assertSame('foo', $p->wait());
     }
 
     /**
-     * @expectedException \LogicException
      * @exepctedExceptionMessage Cannot resolve a fulfilled promise
      */
     public function testCannotResolve()
     {
+        $this->expectException(\LogicException::class);
+
         $p = new FulfilledPromise('foo');
         $p->resolve('bar');
     }
 
     /**
-     * @expectedException \LogicException
      * @exepctedExceptionMessage Cannot reject a fulfilled promise
      */
     public function testCannotReject()
     {
+        $this->expectException(\LogicException::class);
+
         $p = new FulfilledPromise('foo');
         $p->reject('bar');
     }
@@ -52,11 +56,10 @@ class FulfilledPromiseTest extends TestCase
         $this->assertSame('foo', $p->wait());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testCannotResolveWithPromise()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         new FulfilledPromise(new Promise());
     }
 
@@ -74,8 +77,8 @@ class FulfilledPromiseTest extends TestCase
         $p2 = $p->then($f);
         $this->assertNotSame($p, $p2);
         $this->assertNull($r);
-        \GuzzleHttp\Promise\queue()->run();
-        $this->assertEquals('a', $r);
+        P\Utils::queue()->run();
+        $this->assertSame('a', $r);
     }
 
     public function testReturnsNewRejectedWhenOnFulfilledFails()
@@ -88,7 +91,7 @@ class FulfilledPromiseTest extends TestCase
             $p2->wait();
             $this->fail();
         } catch (\Exception $e) {
-            $this->assertEquals('b', $e->getMessage());
+            $this->assertSame('b', $e->getMessage());
         }
     }
 
@@ -105,6 +108,6 @@ class FulfilledPromiseTest extends TestCase
         $fp = new FulfilledPromise('a');
         $t1 = $fp->then(function ($v) { return $v . ' b'; });
         $t1->resolve('why!');
-        $this->assertEquals('why!', $t1->wait());
+        $this->assertSame('why!', $t1->wait());
     }
 }

@@ -2,7 +2,8 @@
 
 use Tightenco\Collect\Support\Arr;
 use Tightenco\Collect\Support\Collection;
-use Tightenco\Collect\Support\Debug\Dumper;
+use Tightenco\Collect\Support\HigherOrderTapProxy;
+use Symfony\Component\VarDumper\VarDumper;
 
 if (! class_exists(Illuminate\Support\Collection::class)) {
     if (! function_exists('array_wrap')) {
@@ -87,6 +88,26 @@ if (! class_exists(Illuminate\Support\Collection::class)) {
         }
     }
 
+    if (! function_exists('tap')) {
+        /**
+         * Call the given Closure with the given value then return the value.
+         *
+         * @param  mixed  $value
+         * @param  callable|null  $callback
+         * @return mixed
+         */
+        function tap($value, $callback = null)
+        {
+            if (is_null($callback)) {
+                return new HigherOrderTapProxy($value);
+            }
+
+            $callback($value);
+
+            return $value;
+        }
+    }
+
     if (! function_exists('with')) {
         /**
          * Return the given object. Useful for chaining.
@@ -110,7 +131,7 @@ if (! class_exists(Illuminate\Support\Collection::class)) {
         function dd(...$args)
         {
             foreach ($args as $x) {
-                (new Dumper)->dump($x);
+               VarDumper::dump($x);
             }
             die(1);
         }

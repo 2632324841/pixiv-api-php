@@ -31,11 +31,6 @@ parameters:
 			path: src/Client.php
 
 		-
-			message: "#^PHPDoc tag @throws with type GuzzleHttp\\\\GuzzleException is not subtype of Throwable$#"
-			count: 2
-			path: src/Client.php
-
-		-
 			message: "#^Method GuzzleHttp\\\\Client\\:\\:requestAsync\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Client.php
@@ -167,11 +162,6 @@ parameters:
 
 		-
 			message: "#^Method GuzzleHttp\\\\Cookie\\\\CookieJar\\:\\:clearSessionCookies\\(\\) has no return typehint specified\\.$#"
-			count: 1
-			path: src/Cookie/CookieJar.php
-
-		-
-			message: "#^Method GuzzleHttp\\\\Cookie\\\\CookieJar\\:\\:count\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: src/Cookie/CookieJar.php
 
@@ -326,17 +316,7 @@ parameters:
 			path: src/Exception/BadResponseException.php
 
 		-
-			message: "#^Method GuzzleHttp\\\\Exception\\\\BadResponseException\\:\\:__construct\\(\\) has parameter \\$message with no typehint specified\\.$#"
-			count: 1
-			path: src/Exception/BadResponseException.php
-
-		-
 			message: "#^Method GuzzleHttp\\\\Exception\\\\ConnectException\\:\\:__construct\\(\\) has parameter \\$handlerContext with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Exception/ConnectException.php
-
-		-
-			message: "#^Method GuzzleHttp\\\\Exception\\\\ConnectException\\:\\:__construct\\(\\) has parameter \\$message with no typehint specified\\.$#"
 			count: 1
 			path: src/Exception/ConnectException.php
 
@@ -347,11 +327,6 @@ parameters:
 
 		-
 			message: "#^Method GuzzleHttp\\\\Exception\\\\RequestException\\:\\:__construct\\(\\) has parameter \\$handlerContext with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Exception/RequestException.php
-
-		-
-			message: "#^Method GuzzleHttp\\\\Exception\\\\RequestException\\:\\:__construct\\(\\) has parameter \\$message with no typehint specified\\.$#"
 			count: 1
 			path: src/Exception/RequestException.php
 
@@ -492,6 +467,11 @@ parameters:
 
 		-
 			message: "#^Method GuzzleHttp\\\\Handler\\\\CurlFactory\\:\\:applyHandlerOptions\\(\\) has parameter \\$conf with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Handler/CurlFactory.php
+
+		-
+			message: "#^Parameter \\#1 \\$filename of function is_dir expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/Handler/CurlFactory.php
 
@@ -1309,6 +1289,11 @@ parameters:
 			message: "#^Method GuzzleHttp\\\\UriTemplate\\:\\:isAssoc\\(\\) has parameter \\$array with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/UriTemplate.php
+
+		-
+			message: "#^Method GuzzleHttp\\\\Utils\\:\\:idnToAsci\\(\\) has parameter \\$info with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: src/Utils.php
 
 		-
 			message: "#^Function GuzzleHttp\\\\uri_template\\(\\) has parameter \\$variables with no value type specified in iterable type array\\.$#"
