@@ -79,7 +79,7 @@ class Api extends Http{
         $time = str_replace('GM', '', $time);
         $headers = [
             'Accept-Language'=> $this->lang,
-            'User-Agent'=> 'PixivAndroidApp/5.0.64 (Android 6.0)',
+            'User-Agent'=> 'PixivAndroidApp/5.0.115 (Android 6.0; PixivBot)',
             'X-Client-Time'=> $time,
             'X-Client-Hash'=> md5($time.$this->hash_secret),
         ];
@@ -90,6 +90,7 @@ class Api extends Http{
             'client_id'=> $this->client_id,
             'client_secret'=> $this->client_secret,
         ];
+
         if($this->request_type == 1){
             $parse_url = parse_url($url);
             $host = $parse_url['host'];
@@ -98,7 +99,10 @@ class Api extends Http{
             $hosts = $this->require_appapi_hosts($host);
             $headers['Host'] = $host;
             $url = str_replace($host, $hosts, $url);
+        }else{
+            $headers['Host'] = 'oauth.secure.pixiv.net';
         }
+
         if($username != NULL && $password != NULL)
         {
             $data['grant_type'] = 'password';
@@ -124,7 +128,7 @@ class Api extends Http{
         
         try {
             
-            $response = $this->client->guzzle_call('POST', $url, $headers, $params=[], $data);
+            $response = $this->guzzle_call('POST', $url, $headers, $params=[], $data);
             
             if($response->getStatusCode() == 200)
             {

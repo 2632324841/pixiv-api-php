@@ -202,15 +202,13 @@ class Ajax extends Api{
 
     /*
      * date 20190926
-     * mode ranking
      * mode daily 天 weekly 周 monthly 月 rookie 新人 original 原创 male 受男性欢迎 female 受女性欢迎 
-     * content_rank all 全部 illust 插图 ugoira 动图 manga 漫画 
+     * content all 全部 illust 插图 ugoira 动图 manga 漫画 
      */
-    public function ranking($date=Null, $content= 'illust', $mode='daily', $p=1){
+    public function ranking($date=Null, $mode='daily', $content= NUll, $p=1){
         //$url = 'https://www.pixiv.net/ranking.php?date='.$date.'&mode='.$mode.'&format=json&p='.$p;
         $url = 'https://www.pixiv.net/ranking.php';
         $params = [
-            'content'=> $content,
             'mode'=> $mode,
             'p'=> $p,
             'format'=> 'json'
@@ -218,6 +216,9 @@ class Ajax extends Api{
         $this->user_agent('PC');
         if($date){
             $params['date'] = $date;
+        }
+        if($content){
+            $params['content'] = $content;
         }
         $r = $this->guzzle_call('GET', $url, $this->headers, $params);
         return $this->parse_result($r);
@@ -856,7 +857,8 @@ class Ajax extends Api{
     public function user_profile_all($user_id){
         $url = 'https://www.pixiv.net/ajax/user/'.$user_id.'/profile/all';
         $params = [
-            'tt'=> $this->init_config['pixiv.context.postKey'],
+            //'tt'=> $this->init_config['pixiv.context.postKey'],
+            'lang'=>$this->lang,
         ];
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
 
