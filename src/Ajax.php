@@ -355,7 +355,7 @@ class Ajax extends Api{
      * ecd 结尾时间
      * mode r18 xxx safe r15 普通
      */
-    public function search_illusts($word, $data){
+    public function search_illusts($word, $data = []){
         $url = 'https://www.pixiv.net/touch/ajax/search/illusts';
         $params = [
             'word'=> $word,
@@ -473,7 +473,7 @@ class Ajax extends Api{
     # $mode='safe', $s_mode='s_tag', $p=1, $order=null, $ratio=null, $wlt=null, $wgt=null, $hlt=null, $hgt=null, $scd=null, $ecd=null, $blt=null, $bgt=null, $tool=null
     /*
      * s_mode = ['s_tag_full','s_tc','s_tag',null]; 标签完全一致 标题说明文字  标签
-     * type = ['illust','manga','ugoira',null]; 插图 漫画 动图
+     * type = ['illust','manga','ugoira', 'all']; 插图 漫画 动图
      * order popular_d 受全站欢迎 popular_male_d 受男性欢迎 popular_female_d 受女性欢迎 date 按旧排序 date_d 按新排序
      * wlt 最低宽度 px
      * wgt 最大宽度 px
@@ -491,10 +491,10 @@ class Ajax extends Api{
         $url = "https://www.pixiv.net/ajax/search/artworks/$word";
         $params = [
             'word'=> $word,
-            'mode'=> $this->params($data, 'mode', 'safe'),
+            'mode'=> $this->params($data, 'mode', 'all'),
             's_mode'=> $this->params($data, 's_mode', 's_tag'),
             'order'=> $this->params($data, 'order','date_d'),
-            'type'=> $this->params($data, 'type'),
+            'type'=> $this->params($data, 'type', 'all'),
             'p'=> $this->params($data, 'p', 1),
             'wlt'=> $this->params($data, 'wlt'),
             'wgt'=> $this->params($data, 'wgt'),
@@ -520,8 +520,6 @@ class Ajax extends Api{
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[]);
         return $this->parse_result($r);
     }
-
-
     
     //用户信息 ajax
     public function user_home($user_id, $lang = 'zh'){
@@ -1011,6 +1009,34 @@ class Ajax extends Api{
         $url = 'https://www.pixiv.net/ajax/user/extra';
         $this->user_agent('PC');
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params=[]);
+        return $this->parse_result($r);
+    }
+
+    /**
+     * 作品收藏的用户列表
+     */
+    public function illust_user_bookmarks($illust_id, $p=1){
+        $url = 'https://www.pixiv.net/touch/ajax_api/ajax_api.php';
+        $params = [
+            'mode'=> 'illust_bookmarks',
+            'id'=>$illust_id,
+            'p'=>$p
+        ];
+
+        $this->user_agent('IOS');
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+        return $this->parse_result($r);
+    }
+
+    //获取标签故事
+    public function tag_stories($tag, $lang='zh'){
+        $url = 'https://www.pixiv.net/ajax/stories/tag_stories';
+        $params = [
+            'tag'=> $tag,
+            'lang'=>$lang,
+        ];
+        $this->user_agent('PC');
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
         return $this->parse_result($r);
     }
 

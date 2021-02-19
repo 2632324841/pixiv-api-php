@@ -18,11 +18,9 @@ use pixiv\Ajax;
 //$ajax->search_illusts_pc('プリンツ・オイゲン(アズールレーン)');
 //print_r($ajax->json);
 
-
 // $Aapi = new Aapi();
 
 //$Papi = new Papi();
-
 
 $ajax = new Ajax();
 
@@ -44,7 +42,7 @@ $ajax->set_init($cookie);
 // $ajax->user_profile_top('4462245');
 //print_r($ajax->json);
 
-$ajax->search_illusts("西木野真姬",['mode'=>'safe','order'=>'popular_d']);
+$ajax->search_illusts_pc_v2("イレイナ",['mode'=>'all','order'=>'popular_d']);
 $url = [];
 foreach($ajax->json['body']['illusts'] as $val){
     $url[] = $val['url_w'];
