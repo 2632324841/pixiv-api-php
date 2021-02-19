@@ -1,4 +1,12 @@
 <?php
+/*
+ * @Author: your name
+ * @Date: 2020-05-28 18:57:22
+ * @LastEditTime: 2021-01-07 20:04:33
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \pixiv-api-php\src\Http.php
+ */
 namespace pixiv;
 use GuzzleHttp;
 use GuzzleHttp\Exception\RequestException;
@@ -11,7 +19,7 @@ class Http{
 
         $path_parts = pathinfo(__FILE__);
         $path = $path_parts['dirname'].'/ssl/cacert.pem';
-        $this->client = new GuzzleHttp\Client(['verify' => $path, 'cookies' => $jar, 'http_errors' => TRUE, 'allow_redirects'=>TRUE]);
+        $this->client = new GuzzleHttp\Client(['verify' => $path, 'cookies' => $jar, 'http_errors' => FALSE, 'allow_redirects'=>TRUE]);
 
     }
 

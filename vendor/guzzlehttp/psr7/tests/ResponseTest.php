@@ -1,4 +1,5 @@
 <?php
+
 namespace GuzzleHttp\Tests\Psr7;
 
 use GuzzleHttp\Psr7;
@@ -31,7 +32,7 @@ class ResponseTest extends BaseTest
     public function testConstructorDoesNotReadStreamBody()
     {
         $streamIsRead = false;
-        $body = Psr7\FnStream::decorate(Psr7\stream_for(''), [
+        $body = Psr7\FnStream::decorate(Psr7\Utils::streamFor(''), [
             '__toString' => function () use (&$streamIsRead) {
                 $streamIsRead = true;
                 return '';
@@ -139,7 +140,7 @@ class ResponseTest extends BaseTest
 
     public function testWithBody()
     {
-        $b = Psr7\stream_for('0');
+        $b = Psr7\Utils::streamFor('0');
         $r = (new Response())->withBody($b);
         $this->assertInstanceOf('Psr\Http\Message\StreamInterface', $r->getBody());
         $this->assertSame('0', (string) $r->getBody());
@@ -254,7 +255,7 @@ class ResponseTest extends BaseTest
      */
     public function testConstructResponseInvalidHeader($header, $headerValue, $expectedMessage)
     {
-        $this->expectException('InvalidArgumentException', $expectedMessage);
+        $this->expectExceptionGuzzle('InvalidArgumentException', $expectedMessage);
         new Response(200, [$header => $headerValue]);
     }
 
@@ -273,7 +274,7 @@ class ResponseTest extends BaseTest
     public function testWithInvalidHeader($header, $headerValue, $expectedMessage)
     {
         $r = new Response();
-        $this->expectException('InvalidArgumentException', $expectedMessage);
+        $this->expectExceptionGuzzle('InvalidArgumentException', $expectedMessage);
         $r->withHeader($header, $headerValue);
     }
 
@@ -314,7 +315,7 @@ class ResponseTest extends BaseTest
      */
     public function testConstructResponseWithNonIntegerStatusCode($invalidValues)
     {
-        $this->expectException('InvalidArgumentException', 'Status code must be an integer value.');
+        $this->expectExceptionGuzzle('InvalidArgumentException', 'Status code must be an integer value.');
         new Response($invalidValues);
     }
 
@@ -325,7 +326,7 @@ class ResponseTest extends BaseTest
     public function testResponseChangeStatusCodeWithNonInteger($invalidValues)
     {
         $response = new Response();
-        $this->expectException('InvalidArgumentException', 'Status code must be an integer value.');
+        $this->expectExceptionGuzzle('InvalidArgumentException', 'Status code must be an integer value.');
         $response->withStatus($invalidValues);
     }
 
@@ -345,7 +346,7 @@ class ResponseTest extends BaseTest
      */
     public function testConstructResponseWithInvalidRangeStatusCode($invalidValues)
     {
-        $this->expectException('InvalidArgumentException', 'Status code must be an integer value between 1xx and 5xx.');
+        $this->expectExceptionGuzzle('InvalidArgumentException', 'Status code must be an integer value between 1xx and 5xx.');
         new Response($invalidValues);
     }
 
@@ -356,7 +357,7 @@ class ResponseTest extends BaseTest
     public function testResponseChangeStatusCodeWithWithInvalidRange($invalidValues)
     {
         $response = new Response();
-        $this->expectException('InvalidArgumentException', 'Status code must be an integer value between 1xx and 5xx.');
+        $this->expectExceptionGuzzle('InvalidArgumentException', 'Status code must be an integer value between 1xx and 5xx.');
         $response->withStatus($invalidValues);
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace GuzzleHttp\Tests\Psr7;
 
 use GuzzleHttp\Psr7\Uri;
@@ -95,12 +96,12 @@ class UriTest extends BaseTest
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unable to parse URI
      * @dataProvider getInvalidUris
      */
     public function testInvalidUrisThrowException($invalidUri)
     {
+        $this->expectExceptionGuzzle('InvalidArgumentException', 'Unable to parse URI');
+
         new Uri($invalidUri);
     }
 
@@ -115,70 +116,59 @@ class UriTest extends BaseTest
         ];
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid port: 100000. Must be between 0 and 65535
-     */
     public function testPortMustBeValid()
     {
+        $this->expectExceptionGuzzle('InvalidArgumentException', 'Must be between 0 and 65535');
+
         (new Uri())->withPort(100000);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Invalid port: -1. Must be between 0 and 65535
-     */
     public function testWithPortCannotBeNegative()
     {
+        $this->expectExceptionGuzzle('InvalidArgumentException', 'Invalid port: -1. Must be between 0 and 65535');
+
         (new Uri())->withPort(-1);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unable to parse URI
-     */
     public function testParseUriPortCannotBeZero()
     {
+        $this->expectExceptionGuzzle('InvalidArgumentException', 'Unable to parse URI');
+
         new Uri('//example.com:0');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testSchemeMustHaveCorrectType()
     {
+        $this->expectExceptionGuzzle('InvalidArgumentException');
+
         (new Uri())->withScheme([]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testHostMustHaveCorrectType()
     {
+        $this->expectExceptionGuzzle('InvalidArgumentException');
+
         (new Uri())->withHost([]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testPathMustHaveCorrectType()
     {
+        $this->expectExceptionGuzzle('InvalidArgumentException');
+
         (new Uri())->withPath([]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testQueryMustHaveCorrectType()
     {
+        $this->expectExceptionGuzzle('InvalidArgumentException');
+
         (new Uri())->withQuery([]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testFragmentMustHaveCorrectType()
     {
+        $this->expectExceptionGuzzle('InvalidArgumentException');
+
         (new Uri())->withFragment([]);
     }
 
@@ -610,12 +600,10 @@ class UriTest extends BaseTest
         $this->assertSame('//example.com/foo', (string) $uri);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The path of a URI without an authority must not start with two slashes "//"
-     */
     public function testPathStartingWithTwoSlashesAndNoAuthorityIsInvalid()
     {
+        $this->expectExceptionGuzzle('InvalidArgumentException', 'The path of a URI without an authority must not start with two slashes "//"');
+
         // URI "//foo" would be interpreted as network reference and thus change the original path to the host
         (new Uri)->withPath('//foo');
     }
@@ -627,16 +615,14 @@ class UriTest extends BaseTest
 
         $uri = $uri->withScheme('');
         $this->assertSame('//example.org//path-not-host.com', (string) $uri); // This is still valid
-        $this->expectException('\InvalidArgumentException');
+        $this->expectExceptionGuzzle('\InvalidArgumentException');
         $uri->withHost(''); // Now it becomes invalid
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage A relative URI must not have a path beginning with a segment containing a colon
-     */
     public function testRelativeUriWithPathBeginngWithColonSegmentIsInvalid()
     {
+        $this->expectExceptionGuzzle('InvalidArgumentException', 'A relative URI must not have a path beginning with a segment containing a colon');
+
         (new Uri)->withPath('mailto:foo');
     }
 
@@ -645,7 +631,7 @@ class UriTest extends BaseTest
         $uri = (new Uri('urn:/mailto:foo'))->withScheme('');
         $this->assertSame('/mailto:foo', $uri->getPath());
 
-        $this->expectException('\InvalidArgumentException');
+        $this->expectExceptionGuzzle('\InvalidArgumentException');
         (new Uri('urn:mailto:foo'))->withScheme('');
     }
 
