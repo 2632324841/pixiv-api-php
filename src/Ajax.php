@@ -873,6 +873,19 @@ class Ajax extends Api{
             $params['type'] = $type;
         }
         $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+        return $this->parse_result($r);
+    }
+
+    //首页顶部信息
+    public function index_illust_top($mode = 'all', $lang = 'zh'){
+        $url = 'https://www.pixiv.net/ajax/top/illust';
+        $params = [
+            'mode'=>$mode,
+            'lang'=>$lang,
+        ];
+        $r = $this->ajax_guzzle_call('GET', $url, $this->headers, $params);
+
+        return $this->parse_result($r);
     }
 
     //标签
