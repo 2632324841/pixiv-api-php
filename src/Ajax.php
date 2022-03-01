@@ -18,7 +18,8 @@ class Ajax extends Api{
     protected $headers = [
         //'origin'=> 'https://www.pixiv.net',
         'user-agent'=> 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
-        'x-requested-with'=> 'XMLHttpRequest',
+        'host'=> 'www.pixiv.net',
+        // 'x-requested-with'=> 'XMLHttpRequest',
     ];
     protected $init_config;
     protected $cookies;
@@ -403,7 +404,7 @@ class Ajax extends Api{
 
     
     # $mode='safe', $s_mode='s_tag', $p=1, $order=null, $ratio=null, $wlt=null, $wgt=null, $hlt=null, $hgt=null, $scd=null, $ecd=null, $blt=null, $bgt=null, $tool=null
-    /*
+    /**
      * s_mode = ['s_tag_full','s_tc','s_tag',null]; 标签完全一致 标题说明文字  标签
      * type = ['illust','manga','ugoira',null]; 插图 漫画 动图
      * order popular_d 受全站欢迎 popular_male_d 受男性欢迎 popular_female_d 受女性欢迎 date 按旧排序 date_d 按新排序
@@ -419,6 +420,7 @@ class Ajax extends Api{
      * ecd 结尾时间
      * mode r18 xxx safe r15 普通
      * P站已经更新 此方法弃用
+     * @deprecated
      */
     public function search_illusts_pc($word, $data=[]){
         $url = "https://www.pixiv.net/tags/$word/artworks";
