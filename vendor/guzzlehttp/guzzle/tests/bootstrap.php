@@ -1,7 +1,8 @@
 <?php
 
 namespace {
-    setlocale(LC_ALL, 'C');
+    \setlocale(\LC_ALL, 'C');
+    \error_reporting(\E_ALL);
 }
 
 namespace GuzzleHttp\Test {
@@ -10,7 +11,7 @@ namespace GuzzleHttp\Test {
     use GuzzleHttp\Tests\Server;
 
     Server::start();
-    register_shutdown_function(function () {
+    \register_shutdown_function(static function () {
         Server::stop();
     });
 }

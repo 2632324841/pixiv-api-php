@@ -11,7 +11,7 @@
     "description": "pixiv api",
     "require": {
         "php": ">=7.2",
-        "guzzlehttp/guzzle": "~6.0",
+        "guzzlehttp/guzzle": "~7.0",
         "jaeger/querylist": "~4.2",
         "sybio/gif-creator": "~1.0"
     },

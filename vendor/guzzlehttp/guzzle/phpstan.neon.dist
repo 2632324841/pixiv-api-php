@@ -1,7 +1,11 @@
 includes:
     - phpstan-baseline.neon
+    - vendor-bin/phpstan/vendor/phpstan/phpstan-deprecation-rules/rules.neon
 
 parameters:
     level: max
+    checkMissingIterableValueType: false
     paths:
-      - src
+        - src
+    bootstrapFiles:
+      - tests/bootstrap-phpstan.php
